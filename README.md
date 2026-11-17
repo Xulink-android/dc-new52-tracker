@@ -1,18 +1,25 @@
-# DC New 52 — Ma bibliothèque
+# DC Tracker
 
-Application web progressive (PWA) de suivi de lecture des recueils DC New 52, organisée selon le guide [Comic Book Herald](https://www.comicbookherald.com/reading-dc-comics/new-52-reading-order/).
+Application web installable (PWA) pour suivre la lecture des comics DC.
 
-- 389 tomes et recueils, regroupés en 38 sections et un bonus Injustice
-- Mode clair/sombre et progression mémorisés localement
-- Recherche, filtres lus/à lire, export/import de sauvegarde
-- Installation Android via Chrome après activation de GitHub Pages
+**Collection disponible aujourd’hui : New 52.** Le catalogue Rebirth pourra être ajouté plus tard sans changer de nom d’application.
 
-## Mise en ligne
+- 389 tomes / recueils, regroupés dans les 38 sections du guide [Comic Book Herald – The New 52](https://www.comicbookherald.com/reading-dc-comics/new-52-reading-order/) avec une section bonus Injustice.
+- Mode jour / nuit et interface mobile.
+- Rechercher, masquer les tomes lus, reprendre la lecture et suivre sa progression.
+- Sauvegarde locale et export / import du suivi.
+- Icône bleue « DC Tracker » originale, sans reprise du logo officiel.
 
-Sur GitHub : Settings → Pages → Deploy from a branch → `main` → `/(root)` → Save.
+## Installation
 
-URL attendue : https://xulink-android.github.io/dc-new52-tracker/
+Site : https://xulink-android.github.io/dc-new52-tracker/
 
-Ouvrir l'URL dans Chrome Android puis choisir **Installer l'application** dans le menu.
+Ouvrir avec Chrome sur Android et sélectionner **Installer l’application** ou **Ajouter à l’écran d’accueil**.
 
-Projet non affilié à DC Comics ou Comic Book Herald ; la liste des publications est bibliographique.
+Si GitHub Pages n’est pas encore activé : **Settings → Pages → Deploy from a branch → main → /(root) → Save**.
+
+## Données et compatibilité
+
+Les identifiants de tomes et la clé de stockage `dc-new52-volumes-progress-v1` sont conservés pour retrouver les lectures cochées sur la même adresse et le même navigateur. Le changement de nom et d'icône n'efface pas la progression.
+
+La sélection de tomes est basée sur le guide de Comic Book Herald. Projet de suivi personnel non officiel et indépendant de DC Comics et de Comic Book Herald.
