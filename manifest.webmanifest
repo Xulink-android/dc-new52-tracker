@@ -1,0 +1,25 @@
+{
+  "name": "DC New 52 — Ma bibliothèque",
+  "short_name": "New 52 Tracker",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f7f4",
+  "theme_color": "#f7f7f4",
+  "lang": "fr",
+  "description": "Suivi de lecture des tomes DC New 52, avec mode jour et nuit.",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
