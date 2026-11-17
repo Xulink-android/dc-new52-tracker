@@ -17,7 +17,7 @@ footer{margin:40px 0 0;padding:23px 0 35px;border-top:1px solid var(--edge);font
 </style></head><body>
 <header><div class="wrap top"><a class="brand" href="./"><img src="./icon-192.png?v=2" alt=""><span><b>MARVEL TRACKER</b><small>Ordre de lecture · Fascicules</small></span></a><nav class="nav"><button class="btn" id="theme" type="button">◐ Mode nuit</button><a class="btn" href="../">DC Tracker</a></nav></div></header>
 <main class="wrap"><div class="hero"><div class="hero-copy"><div class="kicker">Comic Book Herald · Marvel 2007–2008</div><h1>Civil War <span>→</span><br>Secret Invasion</h1><p>Chaque fascicule à sa place. Les grands événements sont intégrés dans le parcours et les numéros consécutifs sont regroupés.</p><button class="button-main" id="go" type="button">Continuer ma lecture</button></div><div class="summary-card"><span class="mini-label">Progression de lecture</span><div class="pct" id="percent">0%</div><div class="track"><div id="bar"></div></div><div class="counts"><div><b id="readCount">0</b><small>étapes lues</small></div><div><b id="leftCount">0</b><small>à découvrir</small></div></div></div></div>
-<div class="notice"><strong>Application Marvel indépendante.</strong> Tes lectures, ton thème et tes sauvegardes ne sont jamais mélangés à DC Tracker. Les trois événements renvoyés par Comic Book Herald sont intégrés directement, avec l’ordre de leurs numéros. Les étapes d'événement ont été séparées des séries pour éviter de cocher deux fois un même fascicule.</div>
+<div class="notice"><strong>Application Marvel indépendante.</strong> Tes lectures, ton thème et tes sauvegardes ne sont jamais mélangés à DC Tracker. Les trois événements renvoyés par Comic Book Herald sont intégrés directement, avec l’ordre de leurs numéros. Les étapes d'événement sont détaillées par numéro. Les compléments absents de la liste principale CBH et les annexes facultatives portent un badge spécifique.</div>
 <div class="heading"><h2>Mon parcours Marvel</h2><small id="total">— étapes</small></div>
 <div class="filters"><input id="search" type="search" placeholder="Rechercher un titre ou un numéro (#12…)" aria-label="Rechercher un fascicule"><select id="sectionFilter" aria-label="Filtrer par section"><option value="all">Toutes les sections</option></select><select id="readFilter" aria-label="Filtrer par lecture"><option value="all">Tous les statuts</option><option value="unread">À lire</option><option value="read">Lus</option></select></div>
 <div class="buttons"><button class="btn" id="expand" type="button">＋ Tout ouvrir</button><button class="btn" id="collapse" type="button">− Tout fermer</button><span class="push"></span><button class="btn" id="export" type="button">↓ Exporter</button><button class="btn" id="import" type="button">↑ Importer</button><input id="importInput" type="file" accept=".json,application/json" hidden><button class="btn" id="reset" type="button">Réinitialiser</button></div>
@@ -33,6 +33,21 @@ const elem=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.classNa
 const allIDs=new Set(catalog.items.map(x=>x.id));
 function getProgress(){try{const x=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"[]");return new Set(Array.isArray(x)?x.filter(id=>allIDs.has(id)):[])}catch(e){return new Set()}}
 let done=getProgress(),q="",section="all",view="all",openStates={};
+const MIGRATION_KEY="marvel-cwsi-one-more-day-migration-v3";
+function expandLegacyOneMoreDay(progress){
+  // Before V3, these three checkboxes also included their One More Day tie-ins.
+  if(progress.has("marvel-008")){progress.add("marvel-omd-01");progress.add("marvel-omd-04");}
+  if(progress.has("marvel-009"))progress.add("marvel-omd-02");
+  if(progress.has("marvel-010"))progress.add("marvel-omd-03");
+  return progress;
+}
+try{
+  if(localStorage.getItem(MIGRATION_KEY)!=="done"){
+    done=expandLegacyOneMoreDay(done);
+    localStorage.setItem(PROGRESS_KEY,JSON.stringify([...done]));
+    localStorage.setItem(MIGRATION_KEY,"done");
+  }
+}catch(e){/* Progress remains available in memory. */}
 const bySection=new Map(catalog.sections.map(s=>[s.id,catalog.items.filter(x=>x.section===s.id)]));
 let timer;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(timer);timer=setTimeout(()=>t.classList.remove("show"),3500)}
@@ -67,6 +82,8 @@ function render(){
       const label=elem("label");label.htmlFor=check.id;const heading=elem("span","entry-title");
       heading.append(elem("span","order",String(item.order).padStart(3,"0")),elem("span","name",item.title));
       if(item.kind==="evenement")heading.append(elem("span","event-badge","ÉVÉNEMENT"));
+      else if(item.kind==="annexe")heading.append(elem("span","event-badge","FACULTATIF"));
+      else if(item.kind==="complement")heading.append(elem("span","event-badge","COMPLÉMENT HORS CBH"));
       label.append(heading,elem("span","issues",item.issues));if(item.note)label.append(elem("span","note",item.note));
       row.append(check,label);listing.append(row);
     }
@@ -83,9 +100,9 @@ $("#expand").addEventListener("click",()=>{catalog.sections.forEach(x=>openState
 $("#collapse").addEventListener("click",()=>{catalog.sections.forEach(x=>openStates[x.id]=false);render()});
 $("#go").addEventListener("click",()=>{const next=catalog.items.find(x=>!done.has(x.id));if(!next){toast("Tu as terminé ce parcours !");return}section=next.section;q="";view="all";$("#search").value="";$("#sectionFilter").value=section;$("#readFilter").value="all";render();const target=$("#read-"+next.id);if(target){target.closest(".entry").scrollIntoView({behavior:"smooth",block:"center"});target.focus({preventScroll:true})}});
 function download(name,text){const blob=new Blob([text],{type:"application/json"}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
-$("#export").addEventListener("click",()=>{download("marvel-tracker-progression-"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({app:"MarvelTrackerCWtoSI",version:1,created:new Date().toISOString(),completed:[...done]},null,2));toast("Sauvegarde Marvel exportée")});
+$("#export").addEventListener("click",()=>{download("marvel-tracker-progression-"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({app:"MarvelTrackerCWtoSI",version:2,created:new Date().toISOString(),completed:[...done]},null,2));toast("Sauvegarde Marvel exportée")});
 $("#import").addEventListener("click",()=>$("#importInput").click());
-$("#importInput").addEventListener("change",e=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(obj.app!=="MarvelTrackerCWtoSI"||!Array.isArray(obj.completed))throw Error("Invalid");const ids=obj.completed.filter(x=>allIDs.has(x));if(confirm("Remplacer la progression Marvel par "+ids.length+" étapes lues ?")){done=new Set(ids);save();render();toast("Progression Marvel restaurée")}}catch(e){alert("Ce fichier n'est pas une sauvegarde valide de Marvel Tracker.")}finally{$("#importInput").value=""}};reader.readAsText(file)});
+$("#importInput").addEventListener("change",e=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const obj=JSON.parse(reader.result);if(obj.app!=="MarvelTrackerCWtoSI"||!Array.isArray(obj.completed))throw Error("Invalid");const ids=new Set(obj.completed.filter(x=>allIDs.has(x)));if(!obj.version||obj.version<2)expandLegacyOneMoreDay(ids);if(confirm("Remplacer la progression Marvel par "+ids.size+" étapes lues ?")){done=ids;save();render();toast("Progression Marvel restaurée")}}catch(e){alert("Ce fichier n'est pas une sauvegarde valide de Marvel Tracker.")}finally{$("#importInput").value=""}};reader.readAsText(file)});
 $("#reset").addEventListener("click",()=>{if(confirm("Effacer uniquement la progression Marvel sur cet appareil ?")){done.clear();save();render();toast("Progression Marvel réinitialisée")}});
 render();
 if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
