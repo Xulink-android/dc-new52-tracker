@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f7f7f4">
-  <meta name="description" content="Ta bibliothèque interactive DC New 52 : 389 tomes, progression personnelle, mode clair et sombre.">
+  <meta name="description" content="DC Tracker : suis ta lecture des tomes New 52. 389 recueils, progression et mode clair/sombre.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <title>DC New 52 — Ma bibliothèque</title>
+  <title>DC Tracker — New 52</title>
   <script>
     (function(){
       var saved;
@@ -24,19 +24,19 @@
     :root {
       color-scheme:light;
       --bg:#f7f7f4; --surface:#fff; --surface-subtle:#f9f9f7; --ink:#171b25; --muted:#737985;
-      --line:#e7e8e7; --line-strong:#d9dbdd; --accent:#d53249; --accent-hover:#b82137;
-      --accent-tint:#fff0f1; --accent-ink:#ab2439; --success:#168367; --success-soft:#eaf7f1;
+      --line:#e7e8e7; --line-strong:#d9dbdd; --accent:#1769e8; --accent-hover:#0c56c5;
+      --accent-tint:#eaf3ff; --accent-ink:#1658b9; --success:#168367; --success-soft:#eaf7f1;
       --shadow:0 14px 44px rgba(28,30,42,.06); --ring-track:#e9eaeb; --chip:#f3f3f1;
-      --hero-from:#f9eceb; --hero-to:#f9f9f7;
+      --hero-from:#eaf4ff; --hero-to:#f9f9f7;
       --max:1180px;
     }
     html[data-theme="dark"] {
       color-scheme:dark;
       --bg:#10131b; --surface:#1b202b; --surface-subtle:#202632; --ink:#f3f4f6; --muted:#a5aebb;
-      --line:#303744; --line-strong:#424b59; --accent:#ff6575; --accent-hover:#ff8190;
-      --accent-tint:#35232d; --accent-ink:#ff9daa; --success:#68d7b0; --success-soft:#1f3b35;
+      --line:#303744; --line-strong:#424b59; --accent:#65baff; --accent-hover:#8ccbff;
+      --accent-tint:#1c3552; --accent-ink:#91cbff; --success:#68d7b0; --success-soft:#1f3b35;
       --shadow:0 16px 48px rgba(0,0,0,.22); --ring-track:#3e4651; --chip:#272d38;
-      --hero-from:#30212c; --hero-to:#1d2431;
+      --hero-from:#173154; --hero-to:#1d2431;
     }
     * { box-sizing:border-box }
     html { scroll-behavior:smooth }
@@ -52,7 +52,7 @@
     .topbar { position:sticky; top:0; z-index:8; background:var(--surface); border-bottom:1px solid var(--line); box-shadow:0 1px 4px rgba(0,0,0,.012) }
     .top-inner { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:var(--max); margin:auto; padding:13px 26px }
     .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--ink); min-width:0 }
-    .brandmark { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; color:#fff; background:#d53249; border-radius:13px 13px 15px 5px; font-size:18px; font-weight:950; letter-spacing:-.14em; box-shadow:0 5px 13px rgba(213,50,73,.19) }
+    .brandmark { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; color:#fff; background:#1769e8; border-radius:13px 13px 15px 5px; font-size:18px; font-weight:950; letter-spacing:-.14em; box-shadow:0 5px 13px rgba(23,105,232,.19) }
     .brandmark span { transform:translateX(-2px) skewX(-8deg) }
     .brand strong { display:block; line-height:1.15; font-size:15px; letter-spacing:.09em; font-weight:900 }
     .brand small { display:block; color:var(--muted); margin-top:3px; font-size:11px; letter-spacing:.03em }
@@ -76,7 +76,7 @@
     h1 span { color:var(--accent) }
     .hero-intro { max-width:500px; font-size:14px; color:var(--muted); margin:0 0 25px }
     .hero-action { display:flex; flex-wrap:wrap; align-items:center; gap:14px }
-    .primary-btn { border:0; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:44px; padding:0 19px; background:var(--accent); color:#fff; font-size:13px; font-weight:800; box-shadow:0 8px 18px rgba(213,50,73,.15) }
+    .primary-btn { border:0; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:44px; padding:0 19px; background:var(--accent); color:#fff; font-size:13px; font-weight:800; box-shadow:0 8px 18px rgba(23,105,232,.15) }
     .primary-btn:hover { background:var(--accent-hover) }
     .primary-btn .icon-inline { font-size:18px; line-height:1 }
     .next-text { display:block; color:var(--muted); font-size:12px; max-width:200px; line-height:1.32 }
@@ -221,8 +221,8 @@
 <header class="topbar">
   <div class="top-inner">
     <a class="brand" href="#top" aria-label="Retour à l'accueil du tracker">
-      <span class="brandmark"><span>52</span></span>
-      <span><strong>NEW 52 <span style="color:var(--accent)">TRACKER</span></strong><small>Ta bibliothèque DC Comics</small></span>
+      <span class="brandmark"><span>DC</span></span>
+      <span><strong>DC <span style="color:var(--accent)">TRACKER</span></strong><small>Ta bibliothèque DC Comics</small></span>
     </a>
     <div class="top-actions">
       <a class="source-link" href="https://www.comicbookherald.com/reading-dc-comics/new-52-reading-order/" target="_blank" rel="noopener noreferrer">Guide Comic Book Herald <span aria-hidden="true">↗</span></a>
