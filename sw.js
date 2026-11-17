@@ -1,5 +1,5 @@
-const CACHE='dc-tracker-cbh-corrected-v3';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const CACHE='dc-tracker-issue-audit-v4';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./issue-audit.js','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
 });
