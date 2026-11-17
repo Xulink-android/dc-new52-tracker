@@ -1,0 +1,31 @@
+{
+  "name": "Marvel Tracker — Civil War à Secret Invasion",
+  "short_name": "Marvel Tracker",
+  "description": "Ordre de lecture Marvel par fascicule, avec World War Hulk, Messiah CompleX et Annihilation: Conquest",
+  "id": "/dc-new52-tracker/marvel/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f6f3",
+  "theme_color": "#b32945",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
