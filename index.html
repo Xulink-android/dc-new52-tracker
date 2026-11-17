@@ -347,10 +347,11 @@ function redraw(){
   for(const sect of catalog.sections){
     if(filterSection!=='all' && filterSection!==sect.id) continue;
     const all=bySection.get(sect.id);
-    const visible=all.filter(i => (sourceMode==='all'||(sourceMode==='guide'?!i.added:sourceMode==='main'?i.kind!=='annexe':!!i.added)) && (viewMode==='all'||(viewMode==='read'?completed.has(i.id):!completed.has(i.id))) && (!q||i.title.toLocaleLowerCase().includes(q)||sect.name.toLocaleLowerCase().includes(q)));
+    const shown=all.filter(i=>sourceMode==='all'||(sourceMode==='guide'?!i.added:sourceMode==='main'?i.kind!=='annexe':!!i.added));
+    const visible=shown.filter(i => (viewMode==='all'||(viewMode==='read'?completed.has(i.id):!completed.has(i.id))) && (!q||i.title.toLocaleLowerCase().includes(q)||sect.name.toLocaleLowerCase().includes(q)));
     if(!visible.length)continue;
     groups++; matches+=visible.length;
-    const read=all.filter(i=>completed.has(i.id)).length;
+    const read=shown.filter(i=>completed.has(i.id)).length;
     const d=el('details','section');d.id='section-'+sect.id.replace('.','-');
     d.open=(q.length>0||filterSection!=='all')?true:(openStates[sect.id]??(sect.id==='0'));
     d.addEventListener('toggle',()=>{if(d.isConnected && !q && filterSection==='all')openStates[sect.id]=d.open});
@@ -358,16 +359,16 @@ function redraw(){
     const index=el('span','section-index',sect.id==='37.1'?'★':String(sect.id).padStart(2,'0'));
     const desc=el('span','section-copy');
     const title=el('strong','',sect.name);
-    const info=el('small','',all.length+' tome'+(all.length>1?'s':'')+' · '+(read===all.length?'Section terminée':(all.length-read)+' à lire'));
-    const meter=el('div','section-meter');meter.setAttribute('aria-hidden','true');const metFill=el('div');metFill.style.width=Math.round(read/all.length*100)+'%';meter.append(metFill);desc.append(title,info,meter);
-    const count=el('span','section-count',read+' / '+all.length);
+    const info=el('small','',shown.length+' tome'+(shown.length>1?'s':'')+' · '+(read===shown.length?'Section terminée':(shown.length-read)+' à lire'));
+    const meter=el('div','section-meter');meter.setAttribute('aria-hidden','true');const metFill=el('div');metFill.style.width=Math.round(read/shown.length*100)+'%';meter.append(metFill);desc.append(title,info,meter);
+    const count=el('span','section-count',read+' / '+shown.length);
     const chev=el('span','chevron','⌄');chev.setAttribute('aria-hidden','true');head.append(index,desc,count,chev);d.append(head);
     const body=el('div','section-body');
     const actions=el('div','section-actions');
-    actions.append(el('span','',read+' sur '+all.length+' tomes lus'));
-    const setAll=el('button','mini-link',read===all.length?'Tout marquer non lu':'Tout marquer comme lu');
+    actions.append(el('span','',read+' sur '+shown.length+' tomes lus'));
+    const setAll=el('button','mini-link',read===shown.length?'Tout marquer non lu':'Tout marquer comme lu');
     setAll.type='button';
-    setAll.addEventListener('click',()=>{const shouldRead=!all.every(i=>completed.has(i.id));all.forEach(i=>shouldRead?completed.add(i.id):completed.delete(i.id));openStates[sect.id]=true;persist();redraw();toast(shouldRead?'Section terminée':'Section remise à lire')});
+    setAll.addEventListener('click',()=>{const shouldRead=!shown.every(i=>completed.has(i.id));shown.forEach(i=>shouldRead?completed.add(i.id):completed.delete(i.id));openStates[sect.id]=true;persist();redraw();toast(shouldRead?'Section terminée':'Section remise à lire')});
     actions.append(setAll);body.append(actions);
     const list=el('div','items');
     for(const comic of visible){
