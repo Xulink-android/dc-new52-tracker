@@ -156,11 +156,27 @@ write("groupes_dates_et_chapitres.csv",review_groups,["title_cbh","title_cbro","
 
 print("REVIEW GROUPS",len(review_groups),flush=True)
 
+# Deduplicate the same series pair across reading-order pages, retaining
+# the union of issue numbers and source-page evidence for manual chronology checks.
+series_pairs=defaultdict(lambda:{"issues":set(),"cbh_urls":set(),"cbro_urls":set()})
+for item in review:
+ key=(item["title_cbh"],item["title_cbro"])
+ series_pairs[key]["issues"].add(int(item["issue"]))
+ series_pairs[key]["cbh_urls"].add(item["cbh_url"])
+ series_pairs[key]["cbro_urls"].add(item["cbro_url"])
+series_report=[]
+for (left,right),v in sorted(series_pairs.items()):
+ nums=sorted(v["issues"])
+ series_report.append({"title_cbh":left,"title_cbro":right,"issue_count":len(nums),"first_issue":nums[0],"last_issue":nums[-1],"issue_numbers":", ".join(map(str,nums)),"cbh_pages":len(v["cbh_urls"]),"cbro_pages":len(v["cbro_urls"]),"date_verification":"REQUIRED","decision":"DO_NOT_AUTO_MARK"})
+write("series_a_verifier_sans_doublons.csv",series_report,["title_cbh","title_cbro","issue_count","first_issue","last_issue","issue_numbers","cbh_pages","cbro_pages","date_verification","decision"])
+print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
+
+
 
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
