@@ -35,7 +35,7 @@ def norm(s):
    "x men 198":"x men 198","decimation x men day after":"decimation house of m day after",
    "spider man breakout":"spider man breakout","civil war fallen son death of captain america":"fallen son death of captain america",
    "civil war fallen son":"fallen son death of captain america",
-   "irredeemable ant man":"irredeemable ant man","beta ray bill stormbreaker":"stormbreaker saga of beta ray bill","x men first class":"x men first class","giant size ms marvel":"giant size ms marvel","uncanny x men rise and fall of shiar empire":"uncanny x men","house of m civil war":"civil war house of m","gl a":"great lakes avengers","gla":"great lakes avengers","punisher max":"punisher"}
+   "irredeemable ant man":"irredeemable ant man","beta ray bill stormbreaker":"stormbreaker saga of beta ray bill","x men first class":"x men first class","giant size ms marvel":"giant size ms marvel","uncanny x men rise and fall of shiar empire":"uncanny x men","uncanny x men rise fall of shiar empire":"uncanny x men","house of m civil war":"civil war house of m","gl a":"great lakes avengers","gla":"great lakes avengers","punisher max":"punisher"}
  return alias.get(s,s)
 def source_key(raw):
  m=re.search(r"(.+?)\s*#\s*(\d+)\b",raw)
@@ -124,13 +124,13 @@ def collect(soup,url):
 def main():
  req=extract_cbh()
  records=[];evs=[]
- for n in [6,7,8]:
+ for n in [6,7,8,9]:
   u=CBRO+f"marvel-master-reading-order-part-{n}/"
   soup=get(u);a,b=collect(soup,u);records+=a;evs+=b
   evs += [urljoin(u,a.get("href")) for a in soup.select("a[href]") if "/marvel/events/" in a.get("href","") and "-reading-order/" in a.get("href","")]
   print("MASTER",n,len(a),len(b),flush=True)
   time.sleep(.5)
- wanted={"avengers-disassembled","house-of-m","decimation","planet-hulk","civil-war","the-initiative","world-war-hulk","one-more-day","x-men-endangered-species","secret-war"}
+ wanted={"avengers-disassembled","house-of-m","decimation","planet-hulk","civil-war","the-initiative","world-war-hulk","one-more-day","x-men-endangered-species","secret-war","secret-invasion"}
  evs=[u for u in dict.fromkeys(evs) if u.rstrip("/").split("/")[-1].removesuffix("-reading-order") in wanted]
  evs.append("https://comicbookreadingorders.com/marvel/events/secret-war-reading-order/")
  evs=list(dict.fromkeys(evs))
