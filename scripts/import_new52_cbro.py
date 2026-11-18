@@ -100,6 +100,8 @@ def extract_event(parent):
         })
       break
   if len(found)<1 or len(found)>500:
+    pos=r.text.find('Mark ')
+    print("EVENT DEBUG",{"url":url,"length":len(r.text),"title":soup.title.get_text(" ",strip=True) if soup.title else "-","mark_pos":pos,"mark_excerpt":r.text[max(0,pos-400):pos+400] if pos>=0 else "","first_inputs":[str(x)[:180] for x in soup.find_all("input")[:3]],"body":soup.get_text(" ",strip=True)[:450]},flush=True)
     raise ValueError(f"Unexpected event list length {len(found)} for {url}")
   print(f"Event {parent['title']}: {len(found)} issues",flush=True)
   return found
