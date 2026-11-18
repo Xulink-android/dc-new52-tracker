@@ -190,6 +190,12 @@ for item in series_report:
   volume_conflicts.append({"title_cbh":item["title_cbh"],"candidate_cbro_volumes":" | ".join(variants),"issue_numbers":item["issue_numbers"],"decision":"HOLD_UNTIL_PUBLICATION_YEAR_VERIFIED"})
 write("conflits_volumes.csv",volume_conflicts,["title_cbh","candidate_cbro_volumes","issue_numbers","decision"])
 
+# Quantify publication-year evidence collected from actual CBRO page text.
+dated_rows=[x for x in rows if x["source"]=="CBRO" and x.get("publication_year")]
+write("cbro_annees_observees.csv",dated_rows,fields)
+print("CBRO YEAR EVIDENCE",len(dated_rows),flush=True)
+
+
 print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 
 
@@ -197,7 +203,7 @@ print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
