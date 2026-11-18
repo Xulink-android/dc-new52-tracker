@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 O=pathlib.Path("marvel-audit-results");O.mkdir(exist_ok=True)
 base="https://www.comicbookherald.com/the-complete-marvel-reading-order-guide/"
 pages=["knights-until-avengers-disassembled/","guide-part-2-disassembled/","marvel-comics-from-avengers-disassembled-to-house-of-m/","guide-part-4-house-of-m/","guide-part-5-decimation/","marvel-comics-between-house-of-m-civil-war/","guide-part-7-civil-war/","marvel-comics-from-civil-war-to-secret-invasion/"]
-urls=[("CBH",urljoin(base,p)) for p in pages]+[("CBRO",f"https://comicbookreadingorders.com/marvel/marvel-master-reading-order-part-{i}/") for i in range(5,10)]
+urls=[("CBH",urljoin(base,p)) for p in pages]+[("CBRO",f"https://comicbookreadingorders.com/marvel/marvel-master-reading-order-part-{i}/") for i in range(1,11)]
 s=requests.Session();s.headers.update({"User-Agent":"Mozilla/5.0 (compatible; personal-reading-list-audit/2.0)"})
 rows=[];errors=[];diagnostics=[];scope_violations=[];stop_found=False;unresolved=[];suspect=[]
 def clean(t):
