@@ -139,6 +139,21 @@ review_groups=[]
 for (left,right,cbh_url,cbro_url),issues in sorted(grouped.items()):
  review_groups.append({"title_cbh":left,"title_cbro":right,"issue_count":len(set(issues)),"issue_numbers":", ".join(map(str,sorted(set(issues)))),"cbh_url":cbh_url,"cbro_url":cbro_url,"decision":"REVIEW_REQUIRED"})
 write("groupes_a_verifier.csv",review_groups,["title_cbh","title_cbro","issue_count","issue_numbers","cbh_url","cbro_url","decision"])
+
+# Evidence for volume adjudication: extract any explicit publication year,
+# issue count and contiguous issue spans. A date not printed in the source
+# must remain unknown rather than being guessed from reading-order position.
+for group in review_groups:
+ nums=[int(n) for n in group["issue_numbers"].split(", ") if n.isdigit()]
+ group["first_issue"]=min(nums) if nums else ""
+ group["last_issue"]=max(nums) if nums else ""
+ group["contiguous"]=bool(nums and len(nums)==max(nums)-min(nums)+1)
+ years=re.findall(r"\b(?:19|20)\d{2}\b",group["title_cbh"]+" "+group["title_cbro"])
+ group["explicit_years"]=", ".join(sorted(set(years))) if years else "NOT_STATED"
+ group["publication_date_verified"]="NO"
+ group["match_confidence"]="PENDING_DATE_AND_VOLUME"
+write("groupes_dates_et_chapitres.csv",review_groups,["title_cbh","title_cbro","issue_count","first_issue","last_issue","contiguous","explicit_years","publication_date_verified","match_confidence","cbh_url","cbro_url"])
+
 print("REVIEW GROUPS",len(review_groups),flush=True)
 
 
