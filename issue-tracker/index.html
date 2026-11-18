@@ -17,7 +17,14 @@ nav{position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1px s
 .actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0 23px}.actions .grow{flex:1}.actions button{border-radius:10px;background:var(--paper);border:1px solid var(--line);padding:9px 12px;color:var(--ink);font-weight:760;font-size:12px}.actions button:hover{background:var(--soft)}
 .resultscount{color:var(--muted);font-size:12px;margin:0 0 11px}
 .part{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:17px;margin-bottom:13px;overflow:hidden}.part>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;padding:17px}.part>summary::-webkit-details-marker{display:none}.number{border-radius:10px;display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;background:var(--accentbg);color:var(--accentink);font-size:15px;font-weight:930}.partheading{flex:1}.partheading strong{display:block;font-size:15px}.partheading small{font-size:11px;color:var(--muted)}.counter{font-size:12px;font-weight:850;color:var(--muted);white-space:nowrap}.chev{font-size:21px;color:var(--muted)}.part[open] .chev{transform:rotate(180deg)}.partmeta{padding:10px 16px;background:var(--soft);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}.partmeta a{font-size:12px;font-weight:850}.partmeta button{font-size:11px;font-weight:750;background:transparent;color:var(--accentink);border:0}
-.rowissue{display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--line);padding:10px 17px;min-height:48px}.rowissue:hover{background:var(--soft)}.rowissue input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--ok);margin:3px 0}.rowissue label{display:flex;flex:1;align-items:baseline;min-width:0;gap:12px;cursor:pointer}.order{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 34px;font-weight:850}.title{overflow-wrap:anywhere;font-size:12px;font-weight:750}.rowissue.done .title{color:var(--muted);text-decoration:line-through}.eventpill{font-size:10px;padding:3px 7px;border-radius:7px;font-weight:820;color:#915109;background:#fff0d6;white-space:nowrap}html[data-theme=dark] .eventpill{background:#544327;color:#ffe2a3}.eventlink{font-weight:780;font-size:11px;white-space:nowrap}.placeholder{padding:40px;text-align:center;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:15px}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,130px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;transition:.18s;z-index:50;font-size:12px;font-weight:780}.toast.show{opacity:1;transform:translate(-50%,0)}
+.rowissue{display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--line);padding:10px 17px;min-height:48px}.rowissue:hover{background:var(--soft)}.rowissue input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--ok);margin:3px 0}.rowissue label{display:flex;flex:1;align-items:baseline;min-width:0;gap:12px;cursor:pointer}.order{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 34px;font-weight:850}.title{overflow-wrap:anywhere;font-size:12px;font-weight:750}.rowissue.done .title{color:var(--muted);text-decoration:line-through}.eventpill{font-size:10px;padding:3px 7px;border-radius:7px;font-weight:820;color:#915109;background:#fff0d6;white-space:nowrap}html[data-theme=dark] .eventpill{background:#544327;color:#ffe2a3}.eventlink{font-weight:780;font-size:11px;white-space:nowrap}
+.eventexpand{border:1px solid var(--line);border-radius:9px;background:var(--accentbg);color:var(--accentink);font-size:11px;font-weight:850;padding:6px 9px;white-space:nowrap}
+.rowissue.eventrow{background:var(--accentbg);align-items:center}
+.rowissue.eventrow label .title{font-weight:900}
+.rowissue.childissue{padding-left:43px;background:var(--soft)}
+.rowissue.childissue .order{color:var(--accentink)}
+@media(max-width:640px){.rowissue.eventrow{flex-wrap:wrap;gap:6px}.rowissue.eventrow label{min-width:120px}.rowissue.childissue{padding-left:25px}.eventexpand{font-size:10px}}
+.placeholder{padding:40px;text-align:center;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:15px}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,130px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;transition:.18s;z-index:50;font-size:12px;font-weight:780}.toast.show{opacity:1;transform:translate(-50%,0)}
 footer{border-top:1px solid var(--line);margin-top:30px;padding:18px 0 42px;color:var(--muted);font-size:11px;line-height:1.8}
 @media(max-width:740px){.hero{grid-template-columns:1fr}.hero-copy{min-height:230px}.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.navrow{min-height:65px}}
 @media(max-width:510px){.shell{padding:0 12px}.brand small{display:none}.brand img{width:36px;height:36px}.brand strong{font-size:12px}.pill{font-size:11px;padding:8px 9px}.hero-copy{padding:27px 23px}.hero h1{font-size:39px}.stats{padding:18px}.heading{align-items:start;flex-direction:column}.part>summary{padding:13px}.rowissue{gap:8px;padding:10px 11px}.rowissue label{gap:8px}.order{flex-basis:24px}.eventlink{font-size:10px}.eventpill{font-size:9px;padding:2px 4px}}
@@ -26,7 +33,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:18px 0 42px;colo
 <main class="shell">
 <section class="hero"><div class="hero-copy"><div class="eyebrow">Par fascicule · New 52</div><h1>Chaque histoire.<br><span>Dans le bon ordre.</span></h1><p>Les trois parties de Comic Book Reading Orders, au numéro près, avec les événements à leur emplacement original. Une progression entièrement séparée des autres applications.</p><button class="mainbtn" id="next" type="button">Reprendre ma lecture ↗</button></div>
 <div class="stats"><label>Progression globale</label><div class="percent" id="percent">0%</div><div class="track"><div class="bar" id="bar"></div></div><div class="statrow"><div><strong id="read">0</strong><small>Étapes terminées</small></div><div><strong id="left">—</strong><small>Étapes restantes</small></div></div></div></section>
-<div class="note"><strong>Une troisième application indépendante.</strong> Ici, une case = un fascicule, ou un renvoi vers un événement du guide. Les événements disposent de leurs propres listes sur Comic Book Reading Orders : dans cette première édition, le bouton « Voir l'ordre ↗ » ouvre leur page d'origine. Les chiffres de la source (640, 605, 698) excluent ces événements. Progression enregistrée localement, sans lien avec tes coches DC par tome ou Marvel.</div>
+<div class="note"><strong>Une troisième application indépendante.</strong> Ici, une case = un fascicule, ou un renvoi vers un événement du guide. Les renvois vers les événements restent à leur position d’origine. Quand leur liste détaillée est disponible, tu peux déplier et cocher chaque fascicule dans l’application ; le lien vers le guide d’origine reste accessible. Les chiffres de la source (640, 605, 698) excluent ces événements. Progression enregistrée localement, sans lien avec tes coches DC par tome ou Marvel.</div>
 <div class="heading"><h2>Ordre de lecture New 52</h2><p id="totalLabel">Chargement du catalogue…</p></div>
 <div class="toolbar"><input id="search" type="search" placeholder="Chercher un comic, une série ou un numéro…" aria-label="Recherche"><select id="part" aria-label="Partie"><option value="all">Toutes les parties</option></select><select id="filter" aria-label="Statut"><option value="all">Tous</option><option value="unread">À lire</option><option value="read">Lus</option><option value="event">Événements seulement</option></select></div>
 <div class="actions"><button type="button" id="expand">＋ Tout ouvrir</button><button type="button" id="collapse">− Tout fermer</button><span class="grow"></span><button type="button" id="export">↓ Exporter</button><button type="button" id="import">↑ Importer</button><input id="file" type="file" accept="application/json,.json" hidden><button type="button" id="reset">Réinitialiser</button></div>
@@ -38,7 +45,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:18px 0 42px;colo
 const KEY="dc-cbro-new52-issues-progress-v1",THEME="dc-cbro-issues-theme-v1";
 const $=s=>document.querySelector(s);
 const el=(tag,cls,text)=>{let d=document.createElement(tag);if(cls)d.className=cls;if(text!==undefined)d.textContent=text;return d};
-let catalogue=null,flat=[],state=new Set(),query="",part="all",filter="all",expanded={};
+let catalogue=null,flat=[],state=new Set(),query="",part="all",filter="all",expanded={},openEvents={};
+function isDone(item){
+ if(Array.isArray(item.subIssues)&&item.subIssues.length)return item.subIssues.every(child=>state.has(child.id));
+ return state.has(item.id);
+}
+function readingItems(s){
+ return s.items.flatMap(item=>item.subIssues?.length?item.subIssues:item.separatePeriod?[]:[item]);
+}
 function showToast(s){const e=$("#toast");e.textContent=s;e.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>e.classList.remove("show"),3500)}
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return new Set(Array.isArray(v)?v.filter(x=>typeof x==="string"):[])}catch{return new Set()}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify([...state]))}catch{showToast("Sauvegarde locale indisponible. Utilise Exporter.")}}
@@ -49,40 +63,64 @@ function render(){
  if(!catalogue)return;
  const total=flat.length,read=flat.filter(x=>state.has(x.id)).length;
  $("#percent").textContent=Math.round(read/total*100)+"%";$("#bar").style.width=(read/total*100)+"%";$("#read").textContent=read;$("#left").textContent=total-read;
- $("#totalLabel").textContent=catalogue.issuesTotal+" fascicules + "+catalogue.eventsTotal+" renvois d'événements";
+ $("#totalLabel").textContent=catalogue.issuesTotal+" fascicules hors événements · "+(catalogue.eventIssuesTotal||0)+" fascicules événementiels · "+catalogue.eventsTotal+" renvois";
  const root=$("#list");root.replaceChildren();let shownCount=0;
  for(const s of catalogue.parts){
   if(part!=="all"&&s.id!==part)continue;
-  const matching=s.items.filter(x=>(filter==="all"||filter==="event"&&x.kind==="event"||filter==="read"&&state.has(x.id)||filter==="unread"&&!state.has(x.id))&&(!query||x.title.toLocaleLowerCase().includes(query)));
+  const matching=s.items.filter(x=>(filter==="all"||filter==="event"&&x.kind==="event"||filter==="read"&&isDone(x)||filter==="unread"&&!isDone(x))&&(!query||x.title.toLocaleLowerCase().includes(query)||x.subIssues?.some(y=>y.title.toLocaleLowerCase().includes(query))));
   if(!matching.length)continue;shownCount+=matching.length;
   const box=el("details","part");box.id="part-"+s.id;box.open=!!query||part!=="all"||(expanded[s.id]??s.id==="1");
   box.addEventListener("toggle",()=>{if(box.isConnected&&!query&&part==="all")expanded[s.id]=box.open});
   const summary=el("summary"),heading=el("span","partheading");
   heading.append(el("strong","",s.name),el("small","",s.issues+" fascicules · "+s.events+" événements renvoyés"));
-  const count=s.items.filter(x=>state.has(x.id)).length;
-  summary.append(el("span","number",s.id),heading,el("span","counter",count+" / "+s.items.length),el("span","chev","⌄"));box.append(summary);
+  const stepItems=readingItems(s),count=stepItems.filter(x=>state.has(x.id)).length;
+  summary.append(el("span","number",s.id),heading,el("span","counter",count+" / "+stepItems.length),el("span","chev","⌄"));box.append(summary);
   const inside=el("div"),meta=el("div","partmeta");
   meta.append(el("span","",matching.length+" étapes affichées"));
   const a=el("a","","Voir la partie d'origine ↗");a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";meta.append(a);inside.append(meta);
   for(const item of matching){
-   const checked=state.has(item.id),row=el("div","rowissue"+(checked?" done":""));
-   const check=el("input");check.type="checkbox";check.id="read-"+item.id;check.checked=checked;
+   const isEvent=item.kind==="event",hasDetails=Array.isArray(item.subIssues)&&item.subIssues.length>0;
+   const checked=isDone(item),row=el("div","rowissue"+(isEvent?" eventrow":"")+(checked?" done":""));
+   const check=el("input");check.type="checkbox";check.id="read-"+item.id;check.checked=checked;check.disabled=!!item.separatePeriod;
    check.setAttribute("aria-label",(checked?"Marquer non lu : ":"Marquer lu : ")+item.title);
-   check.addEventListener("change",()=>{check.checked?state.add(item.id):state.delete(item.id);expanded[s.id]=true;save();render()});
-   const label=el("label");label.htmlFor=check.id;label.append(el("span","order",String(item.order).padStart(3,"0")),el("span","title",item.title));
+   check.addEventListener("change",()=>{
+     if(hasDetails)for(const child of item.subIssues){if(check.checked)state.add(child.id);else state.delete(child.id)}
+     else if(check.checked)state.add(item.id);else state.delete(item.id);
+     expanded[s.id]=true;save();render();
+   });
+   const label=el("label");label.htmlFor=check.id;
+   label.append(el("span","order",String(item.order).padStart(3,"0")),el("span","title",item.title));
    row.append(check,label);
-   if(item.kind==="event"){
-    row.append(el("span","eventpill","ÉVÉNEMENT"));
-    const link=el("a","eventlink","Voir l'ordre ↗");link.href=item.url||s.url;link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","Consulter "+item.title);row.append(link);
+   if(isEvent){
+     row.append(el("span","eventpill",item.separatePeriod?"PÉRIODE SUIVANTE":"ÉVÉNEMENT"));
+     if(hasDetails){
+       const open=!!openEvents[item.id]||!!query;
+       const btn=el("button","eventexpand",open?"Masquer":"Déplier "+item.subIssues.length+" numéros");
+       btn.type="button";btn.addEventListener("click",()=>{openEvents[item.id]=!open;render()});row.append(btn);
+     }
+     const link=el("a","eventlink","Guide ↗");link.href=item.url||s.url;link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","Consulter la source de "+item.title);row.append(link);
    }
    inside.append(row);
+   if(hasDetails&&(openEvents[item.id]||query)){
+     const parentMatches=!query||item.title.toLocaleLowerCase().includes(query);
+     for(const child of item.subIssues){
+       if(!parentMatches&&!child.title.toLocaleLowerCase().includes(query))continue;
+       const childChecked=state.has(child.id),childRow=el("div","rowissue childissue"+(childChecked?" done":""));
+       const cb=el("input");cb.type="checkbox";cb.id="read-"+child.id;cb.checked=childChecked;
+       cb.setAttribute("aria-label",(childChecked?"Marquer non lu : ":"Marquer lu : ")+child.title);
+       cb.addEventListener("change",()=>{cb.checked?state.add(child.id):state.delete(child.id);openEvents[item.id]=true;expanded[s.id]=true;save();render()});
+       const childLabel=el("label");childLabel.htmlFor=cb.id;
+       childLabel.append(el("span","order",String(child.order).padStart(2,"0")),el("span","title",child.title));
+       childRow.append(cb,childLabel);inside.append(childRow);
+     }
+   }
   }
   box.append(inside);root.append(box);
  }
  $("#results").textContent=shownCount+" étapes affichées";
  if(!shownCount)root.append(el("div","placeholder","Aucune étape ne correspond à ces filtres."));
 }
-function next(){const item=flat.find(x=>!state.has(x.id));if(!item){showToast("Parcours terminé !");return}part=item.part;query="";filter="all";$("#part").value=part;$("#search").value="";$("#filter").value="all";render();const target=$("#read-"+item.id);if(target){target.closest(".rowissue").scrollIntoView({behavior:"smooth",block:"center"});target.focus({preventScroll:true})}}
+function next(){const item=flat.find(x=>!state.has(x.id));if(!item){showToast("Parcours terminé !");return}part=item.part;if(item.parent)openEvents[item.parent]=true;query="";filter="all";$("#part").value=part;$("#search").value="";$("#filter").value="all";render();const target=$("#read-"+item.id);if(target){target.closest(".rowissue").scrollIntoView({behavior:"smooth",block:"center"});target.focus({preventScroll:true})}}
 $("#next").addEventListener("click",next);
 $("#search").addEventListener("input",e=>{query=e.target.value.trim().toLocaleLowerCase();render()});
 $("#part").addEventListener("change",e=>{part=e.target.value;render()});
@@ -96,8 +134,18 @@ $("#file").addEventListener("change",e=>{let f=e.target.files?.[0];if(!f)return;
 $("#reset").addEventListener("click",()=>{if(confirm("Effacer uniquement les lectures de DC New 52 · Issues ?")){state.clear();save();render();showToast("Progression réinitialisée")}});
 fetch("./catalog.json",{cache:"no-cache"}).then(r=>{if(!r.ok)throw Error("Catalogue indisponible");return r.json()}).then(c=>{
  if(!Array.isArray(c.parts)||c.parts.length!==3||c.issuesTotal<1900)throw Error("Catalogue incomplet");
- catalogue=c;flat=c.parts.flatMap(p=>p.items.map(x=>({...x,part:p.id})));
+ catalogue=c;
+ let migrated=false;
+ for(const p of c.parts)for(const item of p.items){
+  if(item.subIssues?.length&&state.has(item.id)){
+    state.delete(item.id);item.subIssues.forEach(child=>state.add(child.id));migrated=true;
+  }
+ }
+ flat=c.parts.flatMap(p=>p.items.flatMap(item=>item.subIssues?.length
+  ?item.subIssues.map(child=>({...child,part:p.id,parent:item.id}))
+  :item.separatePeriod?[]:[{...item,part:p.id}]));
  const valid=new Set(flat.map(x=>x.id));state=new Set([...state].filter(x=>valid.has(x)));
+ if(migrated)save();
  for(const s of c.parts){const op=el("option","",s.name+" ("+s.issues+")");op.value=s.id;$("#part").append(op)}
  render();
 }).catch(e=>{console.error(e);$("#totalLabel").textContent="Catalogue indisponible";$("#list").replaceChildren(el("div","placeholder","Le catalogue est en cours de préparation ou n'a pas pu être chargé. Tu peux ouvrir directement la liste originale grâce au lien ci-dessous."));});
