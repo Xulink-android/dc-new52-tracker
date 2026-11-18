@@ -5,7 +5,7 @@ base="https://www.comicbookherald.com/the-complete-marvel-reading-order-guide/"
 pages=["knights-until-avengers-disassembled/","guide-part-2-disassembled/","marvel-comics-from-avengers-disassembled-to-house-of-m/","guide-part-4-house-of-m/","guide-part-5-decimation/","marvel-comics-between-house-of-m-civil-war/","guide-part-7-civil-war/","marvel-comics-from-civil-war-to-secret-invasion/"]
 urls=[("CBH",urljoin(base,p)) for p in pages]+[("CBRO",f"https://comicbookreadingorders.com/marvel/marvel-master-reading-order-part-{i}/") for i in range(5,10)]
 s=requests.Session();s.headers.update({"User-Agent":"Mozilla/5.0 (compatible; personal-reading-list-audit/2.0)"})
-rows=[];errors=[];diagnostics=[];scope_violations=[];stop_found=False;unresolved=[]
+rows=[];errors=[];diagnostics=[];scope_violations=[];stop_found=False;unresolved=[];suspect=[]
 def clean(t):
  t=unicodedata.normalize("NFKD",t).encode("ascii","ignore").decode().lower()
  t=re.sub(r"\b(?:the|marvel's)\b","",t)
@@ -63,6 +63,7 @@ for src,url in urls:
      ranges=re.findall(r"#(\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(\d{1,4}))?",t,re.I)
      if current_collection and ranges:
       title=re.sub(r"\s*(?:vol(?:ume)?\.?\s*\d+|\(\d{4}\))\s*$","",current_collection,flags=re.I).strip()
+      if re.search(r"\b(?:read|guide|collection|trade|amazon|buy|complete|omnibus)\b",title,re.I):suspect.append({"url":url,"title":title,"evidence":t[:250],"reason":"possible collection/marketing title"})
       for lo,hi in ranges:
        start=int(lo);end=int(hi or lo)
        if start<=end and end-start<=120:
@@ -89,13 +90,14 @@ def write(name,data,fields):
 fields=["source","title","normalized","volume","issue","url","evidence"]
 write("extractions.csv",rows,fields)
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
+write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
 idx={}
 for row in rows:idx.setdefault(row["source"],{}).setdefault((row["normalized"],row["issue"]),row)
 a=idx.get("CBH",{});b=idx.get("CBRO",{})
 write("cbh_non_correspondants.csv",[a[k] for k in sorted(a.keys()-b.keys())],fields)
 write("cbro_non_correspondants.csv",[b[k] for k in sorted(b.keys()-a.keys())],fields)
 write("communs.csv",[a[k] for k in sorted(a.keys()&b.keys())],fields)
-report={"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
