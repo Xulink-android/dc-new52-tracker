@@ -5,7 +5,7 @@ base="https://www.comicbookherald.com/the-complete-marvel-reading-order-guide/"
 pages=["knights-until-avengers-disassembled/","guide-part-2-disassembled/","marvel-comics-from-avengers-disassembled-to-house-of-m/","guide-part-4-house-of-m/","guide-part-5-decimation/","marvel-comics-between-house-of-m-civil-war/","guide-part-7-civil-war/","marvel-comics-from-civil-war-to-secret-invasion/"]
 urls=[("CBH",urljoin(base,p)) for p in pages]+[("CBRO",f"https://comicbookreadingorders.com/marvel/marvel-master-reading-order-part-{i}/") for i in range(1,11)]
 s=requests.Session();s.headers.update({"User-Agent":"Mozilla/5.0 (compatible; personal-reading-list-audit/2.0)"})
-rows=[];errors=[];diagnostics=[];scope_violations=[];stop_found=False;unresolved=[];suspect=[]
+rows=[];errors=[];diagnostics=[];scope_violations=[];stop_found=False;unresolved=[];suspect=[];ordering_notes=[]
 def clean(t):
  t=unicodedata.normalize("NFKD",t).encode("ascii","ignore").decode().lower()
  t=re.sub(r"\b(?:the|marvel's)\b","",t)
@@ -101,6 +101,8 @@ for src,url in urls:
      if antman_heading_seen and re.search(r"\b(?:issues?|collects)\s*:",t,re.I) and re.search(r"#\s*12\b",t):
       stop_found=True
       print("ANTMAN STOP MARKER",t[:180],flush=True)
+    if re.search(r"\\b(?:read|between|before|after|in between)\\b",t,re.I) and re.search(r"#\\s*\\d+",t) and re.search(r"\\b(?:between|before|after|in between)\\b",t,re.I):
+     ordering_notes.append({"url":url,"instruction":t[:450],"review":"ORDER_CONSTRAINT_NOT_YET_APPLIED"})
     if len(sample)<6 and ("#" in t or "Issues" in t):sample.append(t[:180])
     if in_last_page and re.match(r"^Issues?\s*:\s*#",t,re.I):
      ranges=re.findall(r"#(\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(\d{1,4}))?",t,re.I)
@@ -155,6 +157,7 @@ print("CBH GROUP DATES",len(cbh_dates),"UNIQUE EXAMPLES",len(date_examples),flus
 
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
 write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
+write("instructions_ordre_cbh.csv",ordering_notes,["url","instruction","review"])
 idx={}
 for row in rows:idx.setdefault(row["source"],{}).setdefault((row["normalized"],row["issue"]),row)
 a=idx.get("CBH",{});b=idx.get("CBRO",{})
@@ -280,7 +283,7 @@ print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"cbh_group_dates_extracted":sum(bool(x.get("cbh_group_date")) for x in rows if x["source"]=="CBH"),"cbh_series_start_year_evidence":sum(bool(x.get("series_start_year")) for x in rows if x["source"]=="CBH"),"chronology_year_pairs":sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"chronology_impossible":sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"cbh_ordering_instructions":len(ordering_notes),"cbh_group_dates_extracted":sum(bool(x.get("cbh_group_date")) for x in rows if x["source"]=="CBH"),"cbh_series_start_year_evidence":sum(bool(x.get("series_start_year")) for x in rows if x["source"]=="CBH"),"chronology_year_pairs":sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"chronology_impossible":sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
