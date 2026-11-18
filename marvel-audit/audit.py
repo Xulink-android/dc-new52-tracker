@@ -51,15 +51,13 @@ for src,url in urls:
      if antman_heading_seen and re.search(r"\b(?:issues?|collects)\s*:",t,re.I) and re.search(r"#\s*12\b",t):
       stop_found=True
       print("ANTMAN STOP MARKER",t[:180],flush=True)
-      break
     if len(sample)<6 and ("#" in t or "Issues" in t):sample.append(t[:180])
     for m in re.finditer(r"([A-Za-z][A-Za-z0-9&:'().,/ –-]{2,85}?)\s*#(\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(\d{1,4}))?",t,re.I):
      title=m.group(1).strip(" :-–.,")
      first=int(m.group(2));last=int(m.group(3) or first)
      if last<first or last-first>120:continue
      for issue in range(first,last+1):add(src,title,issue,url,t)
-    if url==urls[7][1] and re.search(r"Irredeemable Ant-Man",t,re.I) and re.search(r"#\s*12\b",t):
-     print("STOP at Ant-Man #12",flush=True)
+    if in_last_page and stop_found:
      break
    print("CBH SAMPLES",url,json.dumps(sample,ensure_ascii=False),flush=True)
   if src=="CBH" and url==urls[7][1] and not stop_found:
