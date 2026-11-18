@@ -20,7 +20,8 @@ def add(src,title,issue,url,evidence,volume=""):
  title=re.sub(r"\s*\(\d{4}\)\s*$","",title).strip()
  if not title or len(title)>105:return
  cbh_group_date=""
- if src=="CBH":
+ if src=="CBH" and len(re.findall(r"#\\s*\\d+",evidence))<=2:
+  # Avoid attaching a date from one comic to another in multi-series commentary.
   date_match=re.search(r"\((?:(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+)?[\u2019\u0027]?(\d{2}|(?:19|20)\d{2})\)",evidence,re.I)
   if date_match:
    year=date_match.group(2)
