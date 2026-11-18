@@ -41,7 +41,15 @@ for src,url in urls:
       rows[-1]["checkbox_value"]=checkbox.get("value","")
      # CBRO prints issue publication year beside each checkbox.
      # Capture it as evidence; do not confuse this with reading-order era.
-     context=text  # Only the issue-specific label, never a container of unrelated comics
+     # The publication year is commonly a sibling of the label, not inside it.
+     # Inspect only the closest issue-specific parent and only if it contains
+     # exactly one issue checkbox/label, avoiding cross-issue contamination.
+     context=text
+     parent=label.parent
+     if parent is not None:
+      sibling_labels=parent.select("label")
+      if len(sibling_labels)==1:
+       context=parent.get_text(" ",strip=True)
      year_match=re.search(r"\b(?:19|20)\d{2}\b",context)
      if year_match:
       rows[-1]["publication_year"]=year_match.group(0)
