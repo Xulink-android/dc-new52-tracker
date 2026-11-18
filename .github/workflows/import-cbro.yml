@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.github/workflows/import-cbro.yml'
+      - 'scripts/import_new52_cbro.py'
   workflow_dispatch:
 permissions:
   contents: write
