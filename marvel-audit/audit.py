@@ -13,6 +13,7 @@ def clean(t):
  return re.sub(r"[^a-z0-9]+","-",t).strip("-")
 def add(src,title,issue,url,evidence,volume=""):
  title=re.sub(r"\s+"," ",title).strip(" :-–.,")
+ title=re.sub(r"^(?:collects?|issues?)\s*:\s*","",title,flags=re.I).strip()
  title=re.sub(r"\s*\(\s*$","",title).strip()
  title=re.sub(r"\s*\(\d{4}\)\s*$","",title).strip()
  if not title or len(title)>105:return
