@@ -1,0 +1,27 @@
+name: Marvel CBH CBRO isolated audit
+on:
+  push:
+    branches:
+      - audit-marvel-cbh-cbro-2026
+    paths:
+      - 'marvel-audit/**'
+      - '.github/workflows/marvel-audit.yml'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests beautifulsoup4
+      - name: Extract and compare
+        run: python marvel-audit/audit.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: marvel-audit-results
+          path: marvel-audit-results/
