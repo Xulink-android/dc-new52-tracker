@@ -34,30 +34,23 @@ for src,url in urls:
      t=str(node).strip();m=re.search(r"Mark (.+?) #(\d{1,4}) as read",t,re.I)
      if m:add(src,m.group(1),m.group(2),url,t)
   else:
-   # CBH structure: a linked book title followed by 'Issues: ...'.
-   # Keep the immediately preceding title, but prefer explicit titles in Issues.
-   current=""
-   for node in main.find_all(["p","h2","h3","h4","li"]):
-    if node.find_parent(["li","p"]) and node.name not in ("li",):continue
-    text=node.get_text(" ",strip=True)
-    if not text or len(text)>900:continue
-    if url==urls[7][1] and re.search(r"Irredeemable Ant-Man",text,re.I) and not text.lower().startswith("issues:"):
-     # Stop after its following Issues line, not at title.
-     stopping=True
-    if re.match(r"^Issues?\s*:",text,re.I):
-     body=re.sub(r"^Issues?\s*:\s*","",text,flags=re.I)
-     for m in issue_pattern.finditer(body):
-      title=(m.group("title") or current).strip(" :-–.,")
-      a=int(m.group("first"));b=int(m.group("last") or a)
-      if b<a or b-a>120:continue
-      for i in range(a,b+1):add(src,title,i,url,text)
-     if url==urls[7][1] and current.lower().startswith("irredeemable ant-man"):break
-    else:
-     # CBH collection titles generally appear as a single linked heading in a paragraph.
-     links=node.find_all("a")
-     if links and len(text)<160 and not re.match(r"^(note|previously|next|read|issues)\b",text,re.I):
-      candidate=links[0].get_text(" ",strip=True)
-      if len(candidate)>2 and not candidate.lower().startswith(("image","buy","amazon")):current=candidate
+   # Inspect all visible paragraphs and list items. CBH uses different page templates,
+   # so a single "Issues:" selector misses most pages.
+   sample=[]
+   for node in main.select("li,p,h2,h3,h4"):
+    if node.name=="p" and node.find_parent("li"):continue
+    t=node.get_text(" ",strip=True)
+    if not t or len(t)>1000:continue
+    if len(sample)<6 and ("#" in t or "Issues" in t):sample.append(t[:180])
+    for m in re.finditer(r"([A-Za-z][A-Za-z0-9&:'().,/ –-]{2,85}?)\s*#(\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(\d{1,4}))?",t,re.I):
+     title=m.group(1).strip(" :-–.,")
+     first=int(m.group(2));last=int(m.group(3) or first)
+     if last<first or last-first>120:continue
+     for issue in range(first,last+1):add(src,title,issue,url,t)
+    if url==urls[7][1] and re.search(r"Irredeemable Ant-Man",t,re.I) and re.search(r"#\s*12\b",t):
+     print("STOP at Ant-Man #12",flush=True)
+     break
+   print("CBH SAMPLES",url,json.dumps(sample,ensure_ascii=False),flush=True)
   diagnostics.append({"source":src,"url":url,"http":r.status_code,"extracted":len(rows)-n0})
   print(src,url,"extracted",len(rows)-n0,flush=True)
  except Exception as e:
