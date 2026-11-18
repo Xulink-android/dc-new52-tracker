@@ -23,7 +23,7 @@ def norm(s):
  s=s.replace("uncannly","uncanny").replace("frontline","front line").replace("solider","soldier")
  s=re.sub(r"\bvol(?:ume)?\.?\s*\d+\b"," ",s)
  s=re.sub(r"\((?:19|20)\d\d\)"," ",s)
- s=re.sub(r"\b(the|marvel|comics|limited series)\b"," ",s)
+ s=re.sub(r"\b(the|marvel|comics|limited series|and)\b"," ",s)
  s=re.sub(r"[^a-z0-9]+"," ",s).strip()
  alias={"uncanny":"uncanny x men","new x men academy x":"new x men","incredible hulk":"incredible hulk","the incredible hulk":"incredible hulk",
    "iron man director of shield":"iron man","iron man director of s h i e l d":"iron man",
@@ -35,7 +35,7 @@ def norm(s):
    "x men 198":"x men 198","decimation x men day after":"decimation house of m day after",
    "spider man breakout":"spider man breakout","civil war fallen son death of captain america":"fallen son death of captain america",
    "civil war fallen son":"fallen son death of captain america",
-   "irredeemable ant man":"irredeemable ant man","beta ray bill stormbreaker":"stormbreaker saga of beta ray bill","x men first class":"x men first class","giant size ms marvel":"giant size ms marvel"}
+   "irredeemable ant man":"irredeemable ant man","beta ray bill stormbreaker":"stormbreaker saga of beta ray bill","x men first class":"x men first class","giant size ms marvel":"giant size ms marvel","uncanny x men rise and fall of shiar empire":"uncanny x men","house of m civil war":"civil war house of m","gl a":"great lakes avengers","gla":"great lakes avengers","punisher max":"punisher"}
  return alias.get(s,s)
 def source_key(raw):
  m=re.search(r"(.+?)\s*#\s*(\d+)\b",raw)
@@ -130,6 +130,9 @@ def main():
   evs += [urljoin(u,a.get("href")) for a in soup.select("a[href]") if "/marvel/events/" in a.get("href","") and "-reading-order/" in a.get("href","")]
   print("MASTER",n,len(a),len(b),flush=True)
   time.sleep(.5)
+ wanted={"avengers-disassembled","house-of-m","decimation","planet-hulk","civil-war","the-initiative","world-war-hulk","one-more-day","x-men-endangered-species","secret-war"}
+ evs=[u for u in dict.fromkeys(evs) if u.rstrip("/").split("/")[-1].removesuffix("-reading-order") in wanted]
+ evs.append("https://comicbookreadingorders.com/marvel/events/secret-war-reading-order/")
  evs=list(dict.fromkeys(evs))
  print("EVENT_URLS",json.dumps(evs,ensure_ascii=False),flush=True)
  for u in evs:
@@ -153,13 +156,21 @@ def main():
    if k[0]=="black widow" and 1<=k[1]<=6:prefer=next((p["id"] for p in poss if p["title"].startswith("Black Widow Vol. 3 ")),None)
    if k[0]=="black panther":prefer=next((p["id"] for p in poss if p["title"].startswith("Black Panther Vol. 4 ")),None)
    if k[0]=="blade":prefer=next((p["id"] for p in poss if p["title"].startswith("Blade Vol. 5 ")),None)
+   if k[0]=="astonishing x men":prefer=next((p["id"] for p in poss if p["title"].startswith("Astonishing X-Men Vol. 3 ")),None)
+   if k[0]=="thanos":prefer=next((p["id"] for p in poss if p["title"].startswith("Thanos #")),None)
+   if k[0]=="captain america":prefer=next((p["id"] for p in poss if p["title"].startswith("Captain America Vol. 5 ")),None)
+   if k[0]=="x 23":prefer=next((p["id"] for p in poss if p["title"].startswith("X-23 #")),None)
+   if k[0]=="she hulk":prefer=next((p["id"] for p in poss if p["title"].startswith("She-Hulk Vol. 2 ")),None)
+   if k[0]=="new avengers illuminati":prefer=next((p["id"] for p in poss if p["title"].startswith("New Avengers: Illuminati #")),None)
+   if k[0]=="order":prefer=next((p["id"] for p in poss if p["title"].startswith("The Order Vol. 2 ")),None)
+   if k[0]=="punisher":prefer=next((p["id"] for p in poss if p["title"].startswith("Punisher Vol. 7 ")),None)
    if prefer:matched[k]=prefer
    else:amb.append((k,[(p["title"],p["id"]) for p in poss[:5]]))
   else:missing.append(k)
  # Issues repeated in event pages/master may have the same ID.
  print("CHECK_RESULT",json.dumps({"recordCount":len(records),"cbhExplicit":len(req),"matched":len(matched),"ambiguous":len(amb),"missing":len(missing),"missingSamples":missing[:160],"ambiguousSamples":amb[:40]},ensure_ascii=False),flush=True)
  ids=sorted(set(matched.values()))
- payload={"readIds":ids,"meta":{"matched":len(matched),"unmatched":len(missing),"ambiguous":len(amb),"sourceIssueCount":len(req),"siteIssueCount":len(records)}}
+ payload={"readIds":ids,"meta":{"matched":len(matched),"unmatched":len(missing),"ambiguous":len(amb),"sourceIssueCount":len(req),"siteIssueCount":len(records)},"checks":{"antManIds":[matched.get(("irredeemable ant man",i)) for i in range(1,13)],"sourceCoverageByGuide":{g:sum(k in matched for k,v in req.items() if g in v) for g in ["pre","house","decim","civil","decim-trades","house-trades","after-through-antman"]}}}
  token=base64.b64encode(zlib.compress(json.dumps(payload,separators=(",",":")).encode(),9)).decode()
  print("PROGRESS_PAYLOAD_ZLIB_BASE64",token,flush=True)
  print("PROGRESS_PAYLOAD_END",flush=True)
