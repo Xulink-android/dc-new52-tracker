@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d2942"><meta name="description" content="DC New 52 • Issues : suivre les fascicules des trois parties du guide Comic Book Reading Orders, dans leur ordre de lecture.">
+<meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png"><link rel="apple-touch-icon" href="./icon-192.png"><title>DC New 52 • Issues Tracker</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("dc-cbro-issues-theme-v1")||"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
+<style>
+:root{color-scheme:light;--bg:#f7f9fb;--paper:#fff;--soft:#f1f5fa;--ink:#10243e;--muted:#66768b;--line:#e0e7ed;--accent:#145a85;--accentbg:#e5f5f8;--accentink:#126080;--ok:#1b826c;--okbg:#e5f6ef;--banner:#102d49;--banner2:#246d91;--shadow:0 8px 25px rgba(13,36,58,.045)}
+html[data-theme="dark"]{color-scheme:dark;--bg:#101923;--paper:#1b2936;--soft:#233442;--ink:#f4f9fe;--muted:#adbfce;--line:#364959;--accent:#71d6ee;--accentbg:#1f4353;--accentink:#a1e9f9;--ok:#79dfc1;--okbg:#24463c;--banner:#102d49;--banner2:#195975;--shadow:0 8px 28px rgba(0,0,0,.12)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.55;cursor:default}a{color:var(--accentink)}.shell{max-width:1140px;padding:0 20px;margin:auto}
+nav{position:sticky;top:0;z-index:10;background:var(--paper);border-bottom:1px solid var(--line)}.navrow{display:flex;gap:12px;align-items:center;justify-content:space-between;min-height:70px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}.brand img{width:43px;height:43px;border-radius:12px}.brand strong{display:block;font-size:15px;font-weight:950}.brand small{color:var(--muted);font-size:11px}.navlinks{display:flex;align-items:center;gap:8px}.pill{padding:10px 13px;border-radius:11px;background:var(--soft);border:1px solid var(--line);text-decoration:none;color:var(--ink);font-weight:780;font-size:12px;white-space:nowrap}.pill:hover{background:var(--accentbg)}.pill.active{background:var(--accent);color:white;border-color:var(--accent)}button.pill{min-height:39px}
+.hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(230px,.6fr);gap:15px;padding:24px 0 17px}.hero-copy{padding:33px 35px;background:linear-gradient(120deg,var(--banner),var(--banner2));color:#fff;border-radius:24px;position:relative;overflow:hidden;min-height:246px}.hero-copy:after{content:"52";position:absolute;right:-3px;bottom:-95px;font-size:260px;letter-spacing:-.13em;line-height:1;font-weight:950;color:rgba(255,255,255,.055);pointer-events:none}.eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:900;color:#9fe9dc}.hero h1{font-size:clamp(33px,4.2vw,52px);letter-spacing:-.065em;line-height:1.08;margin:13px 0 12px}.hero h1 span{color:#a6f3e5}.hero p{margin:0;color:#d5eaf4;max-width:520px;line-height:1.7;font-size:12px}.mainbtn{border:0;border-radius:11px;background:#b6f0e3;color:#153a4e;font-weight:900;padding:12px 17px;margin-top:19px}
+.stats{display:flex;flex-direction:column;justify-content:center;text-align:center;padding:26px;border-radius:24px;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow)}.stats label{font-size:11px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}.stats .percent{font-size:53px;letter-spacing:-.075em;font-weight:950}.track{height:9px;border-radius:9px;background:var(--line);overflow:hidden}.bar{height:100%;width:0;background:var(--ok)}.statrow{margin-top:20px;display:grid;grid-template-columns:1fr 1fr}.statrow div+div{border-left:1px solid var(--line)}.statrow strong{display:block;font-size:23px}.statrow small{display:block;font-size:10px;color:var(--muted)}
+.note{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:14px 17px;color:var(--muted);font-size:12px;line-height:1.75;margin-bottom:18px}.note strong{color:var(--ink)}
+.heading{display:flex;align-items:end;justify-content:space-between;gap:9px;margin:25px 0 12px}.heading h2{margin:0;font-size:24px;letter-spacing:-.035em}.heading p{margin:0;color:var(--muted);font-size:11px}
+.toolbar{display:grid;grid-template-columns:1.7fr .95fr .85fr;gap:9px;background:var(--paper);padding:12px;border:1px solid var(--line);border-radius:15px}.toolbar input,.toolbar select{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;font-size:12px}.toolbar input::placeholder{color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0 23px}.actions .grow{flex:1}.actions button{border-radius:10px;background:var(--paper);border:1px solid var(--line);padding:9px 12px;color:var(--ink);font-weight:760;font-size:12px}.actions button:hover{background:var(--soft)}
+.resultscount{color:var(--muted);font-size:12px;margin:0 0 11px}
+.part{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:17px;margin-bottom:13px;overflow:hidden}.part>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;padding:17px}.part>summary::-webkit-details-marker{display:none}.number{border-radius:10px;display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;background:var(--accentbg);color:var(--accentink);font-size:15px;font-weight:930}.partheading{flex:1}.partheading strong{display:block;font-size:15px}.partheading small{font-size:11px;color:var(--muted)}.counter{font-size:12px;font-weight:850;color:var(--muted);white-space:nowrap}.chev{font-size:21px;color:var(--muted)}.part[open] .chev{transform:rotate(180deg)}.partmeta{padding:10px 16px;background:var(--soft);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}.partmeta a{font-size:12px;font-weight:850}.partmeta button{font-size:11px;font-weight:750;background:transparent;color:var(--accentink);border:0}
+.rowissue{display:flex;align-items:flex-start;gap:12px;border-top:1px solid var(--line);padding:10px 17px;min-height:48px}.rowissue:hover{background:var(--soft)}.rowissue input{width:19px;height:19px;flex:0 0 auto;accent-color:var(--ok);margin:3px 0}.rowissue label{display:flex;flex:1;align-items:baseline;min-width:0;gap:12px;cursor:pointer}.order{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 34px;font-weight:850}.title{overflow-wrap:anywhere;font-size:12px;font-weight:750}.rowissue.done .title{color:var(--muted);text-decoration:line-through}.eventpill{font-size:10px;padding:3px 7px;border-radius:7px;font-weight:820;color:#915109;background:#fff0d6;white-space:nowrap}html[data-theme=dark] .eventpill{background:#544327;color:#ffe2a3}.eventlink{font-weight:780;font-size:11px;white-space:nowrap}.placeholder{padding:40px;text-align:center;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:15px}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,130px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;transition:.18s;z-index:50;font-size:12px;font-weight:780}.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{border-top:1px solid var(--line);margin-top:30px;padding:18px 0 42px;color:var(--muted);font-size:11px;line-height:1.8}
+@media(max-width:740px){.hero{grid-template-columns:1fr}.hero-copy{min-height:230px}.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.navrow{min-height:65px}}
+@media(max-width:510px){.shell{padding:0 12px}.brand small{display:none}.brand img{width:36px;height:36px}.brand strong{font-size:12px}.pill{font-size:11px;padding:8px 9px}.hero-copy{padding:27px 23px}.hero h1{font-size:39px}.stats{padding:18px}.heading{align-items:start;flex-direction:column}.part>summary{padding:13px}.rowissue{gap:8px;padding:10px 11px}.rowissue label{gap:8px}.order{flex-basis:24px}.eventlink{font-size:10px}.eventpill{font-size:9px;padding:2px 4px}}
+</style></head><body>
+<nav><div class="shell navrow"><a class="brand" href="./"><img src="./icon.svg" alt=""><span><strong>DC NEW 52 · ISSUES</strong><small>Comic Book Reading Orders · suivi indépendant</small></span></a><div class="navlinks"><a class="pill" href="../">DC Tracker</a><a class="pill" href="../marvel/">Marvel</a><button class="pill" type="button" id="theme" title="Mode clair/sombre">◐</button></div></div></nav>
+<main class="shell">
+<section class="hero"><div class="hero-copy"><div class="eyebrow">Par fascicule · New 52</div><h1>Chaque histoire.<br><span>Dans le bon ordre.</span></h1><p>Les trois parties de Comic Book Reading Orders, au numéro près, avec les événements à leur emplacement original. Une progression entièrement séparée des autres applications.</p><button class="mainbtn" id="next" type="button">Reprendre ma lecture ↗</button></div>
+<div class="stats"><label>Progression globale</label><div class="percent" id="percent">0%</div><div class="track"><div class="bar" id="bar"></div></div><div class="statrow"><div><strong id="read">0</strong><small>Étapes terminées</small></div><div><strong id="left">—</strong><small>Étapes restantes</small></div></div></div></section>
+<div class="note"><strong>Une troisième application indépendante.</strong> Ici, une case = un fascicule, ou un renvoi vers un événement du guide. Les événements disposent de leurs propres listes sur Comic Book Reading Orders : dans cette première édition, le bouton « Voir l'ordre ↗ » ouvre leur page d'origine. Les chiffres de la source (640, 605, 698) excluent ces événements. Progression enregistrée localement, sans lien avec tes coches DC par tome ou Marvel.</div>
+<div class="heading"><h2>Ordre de lecture New 52</h2><p id="totalLabel">Chargement du catalogue…</p></div>
+<div class="toolbar"><input id="search" type="search" placeholder="Chercher un comic, une série ou un numéro…" aria-label="Recherche"><select id="part" aria-label="Partie"><option value="all">Toutes les parties</option></select><select id="filter" aria-label="Statut"><option value="all">Tous</option><option value="unread">À lire</option><option value="read">Lus</option><option value="event">Événements seulement</option></select></div>
+<div class="actions"><button type="button" id="expand">＋ Tout ouvrir</button><button type="button" id="collapse">− Tout fermer</button><span class="grow"></span><button type="button" id="export">↓ Exporter</button><button type="button" id="import">↑ Importer</button><input id="file" type="file" accept="application/json,.json" hidden><button type="button" id="reset">Réinitialiser</button></div>
+<p class="resultscount" id="results"></p><div id="list"><div class="placeholder">Chargement de la liste depuis le dépôt GitHub…</div></div>
+<footer><p>Projet personnel indépendant, non affilié à DC ni à Comic Book Reading Orders. Sélection et ordre bibliographiques : <a href="https://comicbookreadingorders.com/dc/new-52-reading-order-part-1/" target="_blank" rel="noopener noreferrer">Comic Book Reading Orders</a>. Les pages d'événements et les liens de lecture officielle restent la propriété de leurs auteurs. Pour garantir la continuité, exporte régulièrement ta progression.</p></footer>
+</main><div id="toast" class="toast" role="status"></div>
+<script>
+"use strict";
+const KEY="dc-cbro-new52-issues-progress-v1",THEME="dc-cbro-issues-theme-v1";
+const $=s=>document.querySelector(s);
+const el=(tag,cls,text)=>{let d=document.createElement(tag);if(cls)d.className=cls;if(text!==undefined)d.textContent=text;return d};
+let catalogue=null,flat=[],state=new Set(),query="",part="all",filter="all",expanded={};
+function showToast(s){const e=$("#toast");e.textContent=s;e.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>e.classList.remove("show"),3500)}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return new Set(Array.isArray(v)?v.filter(x=>typeof x==="string"):[])}catch{return new Set()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify([...state]))}catch{showToast("Sauvegarde locale indisponible. Utilise Exporter.")}}
+function setTheme(t){document.documentElement.dataset.theme=t;$("#theme").textContent=t==="dark"?"☀":"◐";$("#theme").title=t==="dark"?"Passer en mode jour":"Passer en mode nuit";document.querySelector('meta[name="theme-color"]').content=t==="dark"?"#101923":"#0d2942"}
+setTheme(document.documentElement.dataset.theme||"light");$("#theme").addEventListener("click",()=>{let t=document.documentElement.dataset.theme==="dark"?"light":"dark";setTheme(t);try{localStorage.setItem(THEME,t)}catch{}});
+state=load();
+function render(){
+ if(!catalogue)return;
+ const total=flat.length,read=flat.filter(x=>state.has(x.id)).length;
+ $("#percent").textContent=Math.round(read/total*100)+"%";$("#bar").style.width=(read/total*100)+"%";$("#read").textContent=read;$("#left").textContent=total-read;
+ $("#totalLabel").textContent=catalogue.issuesTotal+" fascicules + "+catalogue.eventsTotal+" renvois d'événements";
+ const root=$("#list");root.replaceChildren();let shownCount=0;
+ for(const s of catalogue.parts){
+  if(part!=="all"&&s.id!==part)continue;
+  const matching=s.items.filter(x=>(filter==="all"||filter==="event"&&x.kind==="event"||filter==="read"&&state.has(x.id)||filter==="unread"&&!state.has(x.id))&&(!query||x.title.toLocaleLowerCase().includes(query)));
+  if(!matching.length)continue;shownCount+=matching.length;
+  const box=el("details","part");box.id="part-"+s.id;box.open=!!query||part!=="all"||(expanded[s.id]??s.id==="1");
+  box.addEventListener("toggle",()=>{if(box.isConnected&&!query&&part==="all")expanded[s.id]=box.open});
+  const summary=el("summary"),heading=el("span","partheading");
+  heading.append(el("strong","",s.name),el("small","",s.issues+" fascicules · "+s.events+" événements renvoyés"));
+  const count=s.items.filter(x=>state.has(x.id)).length;
+  summary.append(el("span","number",s.id),heading,el("span","counter",count+" / "+s.items.length),el("span","chev","⌄"));box.append(summary);
+  const inside=el("div"),meta=el("div","partmeta");
+  meta.append(el("span","",matching.length+" étapes affichées"));
+  const a=el("a","","Voir la partie d'origine ↗");a.href=s.url;a.target="_blank";a.rel="noopener noreferrer";meta.append(a);inside.append(meta);
+  for(const item of matching){
+   const checked=state.has(item.id),row=el("div","rowissue"+(checked?" done":""));
+   const check=el("input");check.type="checkbox";check.id="read-"+item.id;check.checked=checked;
+   check.setAttribute("aria-label",(checked?"Marquer non lu : ":"Marquer lu : ")+item.title);
+   check.addEventListener("change",()=>{check.checked?state.add(item.id):state.delete(item.id);expanded[s.id]=true;save();render()});
+   const label=el("label");label.htmlFor=check.id;label.append(el("span","order",String(item.order).padStart(3,"0")),el("span","title",item.title));
+   row.append(check,label);
+   if(item.kind==="event"){
+    row.append(el("span","eventpill","ÉVÉNEMENT"));
+    const link=el("a","eventlink","Voir l'ordre ↗");link.href=item.url||s.url;link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","Consulter "+item.title);row.append(link);
+   }
+   inside.append(row);
+  }
+  box.append(inside);root.append(box);
+ }
+ $("#results").textContent=shownCount+" étapes affichées";
+ if(!shownCount)root.append(el("div","placeholder","Aucune étape ne correspond à ces filtres."));
+}
+function next(){const item=flat.find(x=>!state.has(x.id));if(!item){showToast("Parcours terminé !");return}part=item.part;query="";filter="all";$("#part").value=part;$("#search").value="";$("#filter").value="all";render();const target=$("#read-"+item.id);if(target){target.closest(".rowissue").scrollIntoView({behavior:"smooth",block:"center"});target.focus({preventScroll:true})}}
+$("#next").addEventListener("click",next);
+$("#search").addEventListener("input",e=>{query=e.target.value.trim().toLocaleLowerCase();render()});
+$("#part").addEventListener("change",e=>{part=e.target.value;render()});
+$("#filter").addEventListener("change",e=>{filter=e.target.value;render()});
+$("#expand").addEventListener("click",()=>{if(!catalogue)return;catalogue.parts.forEach(s=>expanded[s.id]=true);render()});
+$("#collapse").addEventListener("click",()=>{if(!catalogue)return;catalogue.parts.forEach(s=>expanded[s.id]=false);render()});
+function download(filename,str){let u=URL.createObjectURL(new Blob([str],{type:"application/json"})),a=el("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),1200)}
+$("#export").addEventListener("click",()=>{download("dc-cbro-new52-progression-"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({app:"New52IssuesCBRO",version:1,created:new Date().toISOString(),completed:[...state]},null,2));showToast("Progression exportée")});
+$("#import").addEventListener("click",()=>$("#file").click());
+$("#file").addEventListener("change",e=>{let f=e.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const x=JSON.parse(rd.result);if(x.app!=="New52IssuesCBRO"||!Array.isArray(x.completed))throw Error("Format inconnu");const valid=new Set(flat.map(v=>v.id));const ids=x.completed.filter(v=>valid.has(v));if(confirm("Remplacer les lectures cochées par "+ids.length+" étapes importées ?")){state=new Set(ids);save();render();showToast("Progression importée")}}catch{alert("Sauvegarde incompatible avec cette application.")}finally{$("#file").value=""}};rd.readAsText(f)});
+$("#reset").addEventListener("click",()=>{if(confirm("Effacer uniquement les lectures de DC New 52 · Issues ?")){state.clear();save();render();showToast("Progression réinitialisée")}});
+fetch("./catalog.json",{cache:"no-cache"}).then(r=>{if(!r.ok)throw Error("Catalogue indisponible");return r.json()}).then(c=>{
+ if(!Array.isArray(c.parts)||c.parts.length!==3||c.issuesTotal<1900)throw Error("Catalogue incomplet");
+ catalogue=c;flat=c.parts.flatMap(p=>p.items.map(x=>({...x,part:p.id})));
+ const valid=new Set(flat.map(x=>x.id));state=new Set([...state].filter(x=>valid.has(x)));
+ for(const s of c.parts){const op=el("option","",s.name+" ("+s.issues+")");op.value=s.id;$("#part").append(op)}
+ render();
+}).catch(e=>{console.error(e);$("#totalLabel").textContent="Catalogue indisponible";$("#list").replaceChildren(el("div","placeholder","Le catalogue est en cours de préparation ou n'a pas pu être chargé. Tu peux ouvrir directement la liste originale grâce au lien ci-dessous."));});
+if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost"))window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
