@@ -152,7 +152,7 @@ for group in review_groups:
  group["explicit_years"]=", ".join(sorted(set(years))) if years else "NOT_STATED"
  group["publication_date_verified"]="NO"
  group["match_confidence"]="PENDING_DATE_AND_VOLUME"
-write("groupes_dates_et_chapitres.csv",review_groups,["title_cbh","title_cbro","issue_count","first_issue","last_issue","contiguous","explicit_years","publication_date_verified","match_confidence","cbh_url","cbro_url"])
+write("groupes_dates_et_chapitres.csv",review_groups,["title_cbh","title_cbro","issue_count","first_issue","last_issue","contiguous","explicit_years","publication_date_verified","match_confidence","cbh_url","cbro_url","issue_numbers","decision"])
 
 print("REVIEW GROUPS",len(review_groups),flush=True)
 
