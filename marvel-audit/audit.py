@@ -130,10 +130,22 @@ match_fields=["title_cbh","title_cbro","issue","cbh_url","cbro_url","reason"]
 write("correspondances_titres_identiques.csv",safe,match_fields)
 write("correspondances_a_verifier.csv",review,match_fields)
 
+# Group review candidates by series/volume pair, reducing hundreds of
+# issue-level checks to a smaller set of explicit editorial decisions.
+grouped=defaultdict(list)
+for item in review:
+ grouped[(item["title_cbh"],item["title_cbro"],item["cbh_url"],item["cbro_url"])].append(int(item["issue"]))
+review_groups=[]
+for (left,right,cbh_url,cbro_url),issues in sorted(grouped.items()):
+ review_groups.append({"title_cbh":left,"title_cbro":right,"issue_count":len(set(issues)),"issue_numbers":", ".join(map(str,sorted(set(issues)))),"cbh_url":cbh_url,"cbro_url":cbro_url,"decision":"REVIEW_REQUIRED"})
+write("groupes_a_verifier.csv",review_groups,["title_cbh","title_cbro","issue_count","issue_numbers","cbh_url","cbro_url","decision"])
+print("REVIEW GROUPS",len(review_groups),flush=True)
+
+
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
