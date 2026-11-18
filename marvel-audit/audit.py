@@ -176,6 +176,20 @@ for (left,right),v in sorted(series_pairs.items()):
  nums=sorted(v["issues"])
  series_report.append({"title_cbh":left,"title_cbro":right,"issue_count":len(nums),"first_issue":nums[0],"last_issue":nums[-1],"issue_numbers":", ".join(map(str,nums)),"cbh_pages":len(v["cbh_urls"]),"cbro_pages":len(v["cbro_urls"]),"date_verification":"REQUIRED","decision":"DO_NOT_AUTO_MARK"})
 write("series_a_verifier_sans_doublons.csv",series_report,["title_cbh","title_cbro","issue_count","first_issue","last_issue","issue_numbers","cbh_pages","cbro_pages","date_verification","decision"])
+
+# Expose title/volume pairs that cannot be disambiguated by issue count alone.
+# A matching issue number is not proof when multiple volume candidates exist.
+volume_conflicts=[]
+cbro_by_normalized=defaultdict(set)
+for item in rows:
+ if item["source"]=="CBRO":
+  cbro_by_normalized[item["normalized"]].add(item["title"])
+for item in series_report:
+ variants=sorted(cbro_by_normalized.get(clean(item["title_cbh"]),set()))
+ if len(variants)>1:
+  volume_conflicts.append({"title_cbh":item["title_cbh"],"candidate_cbro_volumes":" | ".join(variants),"issue_numbers":item["issue_numbers"],"decision":"HOLD_UNTIL_PUBLICATION_YEAR_VERIFIED"})
+write("conflits_volumes.csv",volume_conflicts,["title_cbh","candidate_cbro_volumes","issue_numbers","decision"])
+
 print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 
 
@@ -183,7 +197,7 @@ print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
