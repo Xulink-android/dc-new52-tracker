@@ -104,10 +104,34 @@ a=idx.get("CBH",{});b=idx.get("CBRO",{})
 write("cbh_non_correspondants.csv",[a[k] for k in sorted(a.keys()-b.keys())],fields)
 write("cbro_non_correspondants.csv",[b[k] for k in sorted(b.keys()-a.keys())],fields)
 write("communs.csv",[a[k] for k in sorted(a.keys()&b.keys())],fields)
+
+# Conservative matching: do not validate ambiguous volume identities or titles.
+# Distinguish candidates from automatically safe matches.
+from collections import defaultdict
+titles_by_key=defaultdict(set)
+for row in rows:
+ titles_by_key[(row["source"],row["normalized"])].add(row["title"].lower().strip())
+safe=[];review=[]
+for k in sorted(a.keys()&b.keys()):
+ left,right=a[k],b[k]
+ same_title=left["title"].lower().strip()==right["title"].lower().strip()
+ has_volume=bool(re.search(r"\b(?:vol(?:ume)?\.?\s*\d+|\(\d{4}\))\b",left["title"]+" "+right["title"],re.I))
+ ambiguous=len(titles_by_key[("CBH",k[0])])>1 or len(titles_by_key[("CBRO",k[0])])>1
+ rec={"title_cbh":left["title"],"title_cbro":right["title"],"issue":left["issue"],"cbh_url":left["url"],"cbro_url":right["url"],"reason":""}
+ if same_title and not has_volume and not ambiguous:
+  rec["reason"]="identical title and issue; volume not independently verified"
+  safe.append(rec)
+ else:
+  rec["reason"]="volume or title identity requires verification"
+  review.append(rec)
+match_fields=["title_cbh","title_cbro","issue","cbh_url","cbro_url","reason"]
+write("correspondances_titres_identiques.csv",safe,match_fields)
+write("correspondances_a_verifier.csv",review,match_fields)
+
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
