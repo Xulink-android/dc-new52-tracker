@@ -34,7 +34,7 @@ for src,url in urls:
      # CBRO prints issue publication year beside each checkbox.
      # Capture it as evidence; do not confuse this with reading-order era.
      context=label.parent.get_text(" ",strip=True) if label.parent else text
-     year_match=re.search(r"\\b(?:19|20)\\d{2}\\b",context)
+     year_match=re.search(r"\b(?:19|20)\d{2}\b",context)
      if year_match:
       rows[-1]["publication_year"]=year_match.group(0)
    # Some themes do not use labels: recover explicit 'Mark X #N as read' text.
@@ -103,7 +103,7 @@ for src,url in urls:
 def write(name,data,fields):
  with (O/name).open("w",newline="",encoding="utf-8-sig") as f:
   w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(data)
-fields=["source","title","normalized","volume","issue","url","evidence"]
+fields=["source","title","normalized","volume","issue","url","evidence","publication_year"]
 write("extractions.csv",rows,fields)
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
 write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
