@@ -77,6 +77,13 @@ for src,url in urls:
     if in_last_page and stop_found:
      break
    print("CBH SAMPLES",url,json.dumps(sample,ensure_ascii=False),flush=True)
+  if src=="CBH" and url==urls[7][1] and stop_found:
+   antman=[x for x in rows[n0:] if re.search(r"irredeemable[- ]ant[- ]man",x["title"],re.I)]
+   antman_issues={int(x["issue"]) for x in antman}
+   if not set(range(1,13)).issubset(antman_issues):
+    scope_violations.append("Ant-Man #1-12 not all extracted: "+str(sorted(antman_issues)))
+   if any(i>12 for i in antman_issues):
+    scope_violations.append("Ant-Man issues beyond #12 extracted")
   if src=="CBH" and url==urls[7][1] and not stop_found:
    scope_violations.append("Irredeemable Ant-Man #12 stop not proven on final CBH page")
   diagnostics.append({"source":src,"url":url,"http":r.status_code,"extracted":len(rows)-n0})
@@ -97,6 +104,9 @@ a=idx.get("CBH",{});b=idx.get("CBRO",{})
 write("cbh_non_correspondants.csv",[a[k] for k in sorted(a.keys()-b.keys())],fields)
 write("cbro_non_correspondants.csv",[b[k] for k in sorted(b.keys()-a.keys())],fields)
 write("communs.csv",[a[k] for k in sorted(a.keys()&b.keys())],fields)
+# Never treat the following as verified reading progress:
+# titles normalized without volume identity; narrative recommendations;
+# CBRO pages outside this limited selection; duplicated ranges.
 report={"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
