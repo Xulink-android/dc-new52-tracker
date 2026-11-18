@@ -102,7 +102,7 @@ for src,url in urls:
      if antman_heading_seen and re.search(r"\b(?:issues?|collects)\s*:",t,re.I) and re.search(r"#\s*12\b",t):
       stop_found=True
       print("ANTMAN STOP MARKER",t[:180],flush=True)
-    if re.search(r"\\b(?:read|between|before|after|in between)\\b",t,re.I) and re.search(r"#\\s*\\d+",t) and re.search(r"\\b(?:between|before|after|in between)\\b",t,re.I):
+    if re.search(r"\b(?:read|between|before|after|in between)\b",t,re.I) and re.search(r"#\s*\d+",t) and re.search(r"\b(?:between|before|after|in between)\b",t,re.I):
      ordering_notes.append({"url":url,"instruction":t[:450],"review":"ORDER_CONSTRAINT_NOT_YET_APPLIED"})
     if len(sample)<6 and ("#" in t or "Issues" in t):sample.append(t[:180])
     if in_last_page and re.match(r"^Issues?\s*:\s*#",t,re.I):
