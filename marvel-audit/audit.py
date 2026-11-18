@@ -5,7 +5,7 @@ base="https://www.comicbookherald.com/the-complete-marvel-reading-order-guide/"
 pages=["knights-until-avengers-disassembled/","guide-part-2-disassembled/","marvel-comics-from-avengers-disassembled-to-house-of-m/","guide-part-4-house-of-m/","guide-part-5-decimation/","marvel-comics-between-house-of-m-civil-war/","guide-part-7-civil-war/","marvel-comics-from-civil-war-to-secret-invasion/"]
 urls=[("CBH",urljoin(base,p)) for p in pages]+[("CBRO",f"https://comicbookreadingorders.com/marvel/marvel-master-reading-order-part-{i}/") for i in range(5,10)]
 s=requests.Session();s.headers.update({"User-Agent":"Mozilla/5.0 (compatible; personal-reading-list-audit/2.0)"})
-rows=[];errors=[];diagnostics=[]
+rows=[];errors=[];diagnostics=[];scope_violations=[];stop_found=False
 def clean(t):
  t=unicodedata.normalize("NFKD",t).encode("ascii","ignore").decode().lower()
  t=re.sub(r"\b(?:the|marvel's)\b","",t)
@@ -37,10 +37,21 @@ for src,url in urls:
    # Inspect all visible paragraphs and list items. CBH uses different page templates,
    # so a single "Issues:" selector misses most pages.
    sample=[]
+   in_last_page=(url==urls[7][1])
+   antman_heading_seen=False
    for node in main.select("li,p,h2,h3,h4"):
     if node.name=="p" and node.find_parent("li"):continue
     t=node.get_text(" ",strip=True)
     if not t or len(t)>1000:continue
+    if in_last_page:
+     # The first heading/title referring to Ant-Man marks the final collection.
+     # Stop immediately after the next issues paragraph (which must contain #12).
+     if re.search(r"irredeemable\s+ant[- ]man",t,re.I) and not re.search(r"\b(?:note|world war hulk)\b",t,re.I):
+      antman_heading_seen=True
+     if antman_heading_seen and re.search(r"\b(?:issues?|collects)\s*:",t,re.I) and re.search(r"#\s*12\b",t):
+      stop_found=True
+      print("ANTMAN STOP MARKER",t[:180],flush=True)
+      break
     if len(sample)<6 and ("#" in t or "Issues" in t):sample.append(t[:180])
     for m in re.finditer(r"([A-Za-z][A-Za-z0-9&:'().,/ –-]{2,85}?)\s*#(\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(\d{1,4}))?",t,re.I):
      title=m.group(1).strip(" :-–.,")
@@ -51,6 +62,8 @@ for src,url in urls:
      print("STOP at Ant-Man #12",flush=True)
      break
    print("CBH SAMPLES",url,json.dumps(sample,ensure_ascii=False),flush=True)
+  if src=="CBH" and url==urls[7][1] and not stop_found:
+   scope_violations.append("Irredeemable Ant-Man #12 stop not proven on final CBH page")
   diagnostics.append({"source":src,"url":url,"http":r.status_code,"extracted":len(rows)-n0})
   print(src,url,"extracted",len(rows)-n0,flush=True)
  except Exception as e:
@@ -67,7 +80,7 @@ a=idx.get("CBH",{});b=idx.get("CBRO",{})
 write("cbh_non_correspondants.csv",[a[k] for k in sorted(a.keys()-b.keys())],fields)
 write("cbro_non_correspondants.csv",[b[k] for k in sorted(b.keys()-a.keys())],fields)
 write("communs.csv",[a[k] for k in sorted(a.keys()&b.keys())],fields)
-report={"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
-if errors:raise SystemExit(2)
+if errors or scope_violations:raise SystemExit(2)
