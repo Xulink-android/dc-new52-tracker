@@ -19,7 +19,13 @@ def add(src,title,issue,url,evidence,volume=""):
  title=re.sub(r"\s*\(\s*$","",title).strip()
  title=re.sub(r"\s*\(\d{4}\)\s*$","",title).strip()
  if not title or len(title)>105:return
- rows.append(dict(source=src,title=title,normalized=clean(title),volume=volume,issue=str(issue),url=url,evidence=evidence[:250],series_start_year=series_start_year))
+ cbh_group_date=""
+ if src=="CBH":
+  date_match=re.search(r"\((?:(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+)?[\u2019\u0027]?(\d{2}|(?:19|20)\d{2})\)",evidence,re.I)
+  if date_match:
+   year=date_match.group(2)
+   cbh_group_date=(date_match.group(1)+" " if date_match.group(1) else "")+(("20" if int(year)<50 else "19")+year if len(year)==2 else year)
+ rows.append(dict(source=src,title=title,normalized=clean(title),volume=volume,issue=str(issue),url=url,evidence=evidence[:250],series_start_year=series_start_year,cbh_group_date=cbh_group_date))
 issue_pattern=re.compile(r"(?:(?P<title>[A-Za-z][A-Za-z0-9 :&'().,/–-]{2,80}?)\s*)?#(?P<first>\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(?P<last>\d{1,4}))?",re.I)
 for src,url in urls:
  try:
@@ -130,7 +136,7 @@ for src,url in urls:
 def write(name,data,fields):
  with (O/name).open("w",newline="",encoding="utf-8-sig") as f:
   w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(data)
-fields=["source","title","normalized","volume","issue","url","evidence","publication_year","checkbox_id","checkbox_name","checkbox_value","series_start_year"]
+fields=["source","title","normalized","volume","issue","url","evidence","publication_year","checkbox_id","checkbox_name","checkbox_value","series_start_year","cbh_group_date"]
 write("extractions.csv",rows,fields)
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
 write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
@@ -187,7 +193,7 @@ for (left,right,cbh_url,cbro_url),issues in sorted(grouped.items()):
 write("groupes_a_verifier.csv",review_groups,["title_cbh","title_cbro","issue_count","issue_numbers","cbh_url","cbro_url","decision"])
 
 # DATE SEMANTICS (user-confirmed):
-# CBH year identifies the START YEAR of a series/volume, NOT an issue publication year.
+# CBH dates attached to issue ranges (e.g. Iron Man #7-12 (Jun 06)) describe the range, NOT necessarily series launch.\n# Explicit series/volume launch years are a separate field and must not be inferred from range dates.
 # CBRO year is the INDIVIDUAL ISSUE publication year.
 # Never demand equality of these years or auto-reject a match because they differ.
 # Series start year <= issue publication year is only a plausibility check,
@@ -259,7 +265,7 @@ print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"cbh_series_start_year_evidence":sum(bool(x.get("series_start_year")) for x in rows if x["source"]=="CBH"),"chronology_year_pairs":sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"chronology_impossible":sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"cbh_group_dates_extracted":sum(bool(x.get("cbh_group_date")) for x in rows if x["source"]=="CBH"),"cbh_series_start_year_evidence":sum(bool(x.get("series_start_year")) for x in rows if x["source"]=="CBH"),"chronology_year_pairs":sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"chronology_impossible":sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
