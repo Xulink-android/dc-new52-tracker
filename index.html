@@ -61,6 +61,9 @@
     .source-link:hover { color:var(--accent) }
     .cross-tracker-link { display:inline-flex; align-items:center; justify-content:center; min-height:40px; gap:6px; padding:0 14px; border-radius:12px; background:#a92442; color:#fff; text-decoration:none; font-size:12px; font-weight:850; white-space:nowrap }
     .cross-tracker-link:hover { background:#861c33; color:#fff }
+    .cross-tracker-link.tracker-issues {background:#176b80;color:#fff}
+    .cross-tracker-link.tracker-issues:hover {background:#124f65;color:#fff}
+    @media(max-width:530px){.cross-tracker-link.tracker-issues {padding:0 9px}}
     .cross-tracker-short { display:none }
     @media(max-width:530px) { .cross-tracker-link { min-height:39px; padding:0 11px; font-size:12px } .cross-tracker-long { display:none } .cross-tracker-short { display:inline } .top-actions .theme-btn { width:40px; padding:0; gap:0 } .top-actions .theme-label { display:none } }
     .theme-btn { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:43px; padding:0 14px; border-radius:13px; border:1px solid var(--line-strong); color:var(--ink); background:var(--surface-subtle); font-weight:700; font-size:12px }
@@ -246,6 +249,7 @@
     </a>
     <div class="top-actions">
       <a class="cross-tracker-link" href="./marvel/" aria-label="Ouvrir Marvel Tracker"><span class="cross-tracker-long">Marvel Tracker</span><span class="cross-tracker-short">Marvel</span></a>
+      <a class="cross-tracker-link tracker-issues" href="./issue-tracker/" aria-label="Ouvrir New 52 Issues Tracker"><span class="cross-tracker-long">New 52 Issues</span><span class="cross-tracker-short">Issues</span></a>
       <a class="source-link" href="https://www.comicbookherald.com/reading-dc-comics/new-52-reading-order/" target="_blank" rel="noopener noreferrer">Guide Comic Book Herald <span aria-hidden="true">↗</span></a>
       <button type="button" class="theme-btn" id="themeToggle" aria-pressed="false" aria-label="Basculer le thème clair ou sombre">
         <span class="theme-symbol moon-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13.3A8.6 8.6 0 0 1 10.7 3.5 8.6 8.6 0 1 0 20.5 13.3Z"/></svg></span>
