@@ -164,6 +164,8 @@ def main():
    if k[0]=="new avengers illuminati":prefer=next((p["id"] for p in poss if p["title"].startswith("New Avengers: Illuminati #")),None)
    if k[0]=="order":prefer=next((p["id"] for p in poss if p["title"].startswith("The Order Vol. 2 ")),None)
    if k[0]=="punisher":prefer=next((p["id"] for p in poss if p["title"].startswith("Punisher Vol. 7 ")),None)
+   if k[0]=="new avengers":prefer=next((p["id"] for p in poss if p["title"].startswith("New Avengers #")),None)
+   if k[0]=="heroes for hire":prefer=next((p["id"] for p in poss if p["title"].startswith("Heroes for Hire Vol. 2 ")),None)
    if prefer:matched[k]=prefer
    else:amb.append((k,[(p["title"],p["id"]) for p in poss[:5]]))
   else:missing.append(k)
