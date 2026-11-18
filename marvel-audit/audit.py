@@ -13,6 +13,8 @@ def clean(t):
  return re.sub(r"[^a-z0-9]+","-",t).strip("-")
 def add(src,title,issue,url,evidence,volume=""):
  title=re.sub(r"\s+"," ",title).strip(" :-–.,")
+ title=re.sub(r"\s*\(\s*$","",title).strip()
+ title=re.sub(r"\s*\(\d{4}\)\s*$","",title).strip()
  if not title or len(title)>105:return
  rows.append(dict(source=src,title=title,normalized=clean(title),volume=volume,issue=str(issue),url=url,evidence=evidence[:250]))
 issue_pattern=re.compile(r"(?:(?P<title>[A-Za-z][A-Za-z0-9 :&'().,/–-]{2,80}?)\s*)?#(?P<first>\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(?P<last>\d{1,4}))?",re.I)
