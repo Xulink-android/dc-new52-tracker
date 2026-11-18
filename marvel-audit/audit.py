@@ -24,7 +24,7 @@ def add(src,title,issue,url,evidence,volume=""):
   # Avoid attaching a date from one comic to another in multi-series commentary.
   date_match=re.search(r"\((?:(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+)?[\u2019\u0027]?(\d{2}|(?:19|20)\d{2})\)",evidence,re.I)
   # The range date must have a month, unlike series start years in Collects entries.
-  if date_match:
+  if date_match and date_match.group(1) and len(re.findall(r"\\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+[\\u2019\\u0027]?\\d{2,4}",evidence,re.I))==1:
    year=date_match.group(2)
    cbh_group_date=(date_match.group(1)+" " if date_match.group(1) else "")+(("20" if int(year)<50 else "19")+year if len(year)==2 else year)
  rows.append(dict(source=src,title=title,normalized=clean(title),volume=volume,issue=str(issue),url=url,evidence=evidence[:250],series_start_year=series_start_year,cbh_group_date=cbh_group_date))
