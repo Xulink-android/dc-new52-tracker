@@ -172,6 +172,12 @@ for (left,right,cbh_url,cbro_url),issues in sorted(grouped.items()):
  review_groups.append({"title_cbh":left,"title_cbro":right,"issue_count":len(set(issues)),"issue_numbers":", ".join(map(str,sorted(set(issues)))),"cbh_url":cbh_url,"cbro_url":cbro_url,"decision":"REVIEW_REQUIRED"})
 write("groupes_a_verifier.csv",review_groups,["title_cbh","title_cbro","issue_count","issue_numbers","cbh_url","cbro_url","decision"])
 
+# DATE SEMANTICS (user-confirmed):
+# CBH year identifies the START YEAR of a series/volume, NOT an issue publication year.
+# CBRO year is the INDIVIDUAL ISSUE publication year.
+# Never demand equality of these years or auto-reject a match because they differ.
+# Series start year <= issue publication year is only a plausibility check,
+# not sufficient evidence to mark progress.
 # Evidence for volume adjudication: extract any explicit publication year,
 # issue count and contiguous issue spans. A date not printed in the source
 # must remain unknown rather than being guessed from reading-order position.
