@@ -35,7 +35,7 @@ def norm(s):
    "x men 198":"x men 198","decimation x men day after":"decimation house of m day after",
    "spider man breakout":"spider man breakout","civil war fallen son death of captain america":"fallen son death of captain america",
    "civil war fallen son":"fallen son death of captain america",
-   "irredeemable ant man":"irredeemable ant man"}
+   "irredeemable ant man":"irredeemable ant man","beta ray bill stormbreaker":"stormbreaker saga of beta ray bill","x men first class":"x men first class","giant size ms marvel":"giant size ms marvel"}
  return alias.get(s,s)
 def source_key(raw):
  m=re.search(r"(.+?)\s*#\s*(\d+)\b",raw)
@@ -50,6 +50,7 @@ def add(read,raw,guide):
  if not pat:return 0
  series=pat.group(1).strip(" :,;-")
  if series.lower().startswith("issues:"):return 0
+ if len(series)>100 or any(series.lower().startswith(x) for x in ["this collection","should be","i recommend","note:","if you"]):return 0
  if series.lower().startswith("decimation: house of m: the day after"):series="Decimation: House of M: The Day After"
  a=int(pat.group(2));b=int(pat.group(3) or a)
  if b<a or b-a>100:return 0
@@ -81,6 +82,16 @@ def extract_cbh():
  # Add the Decimation trade-only issue ranges explicitly, since CBH's digital list omits them.
  for raw in ["Uncanny X-Men #466-474","New Excalibur #1-5","X-Men #177-181","X-Factor #1-6"]:
   add(req,raw,"decim-trades")
+ # Source page also lists named one-shots without a printed '#1'.
+ for raw in [
+  "New Avengers: Illuminati #1",
+  "Civil War: The Return #1",
+  "Captain America/Iron Man: Casualties of War #1",
+  "Civil War: The Confession #1",
+  "X-Men: Endangered Species #1",
+  "Winter Soldier: Winter Kills #1",
+  "Civil War: The Initiative #1"
+ ]:add(req,raw,"explicit-named-one-shot")
  # Add House of M trade-only prequels explicitly listed in CBH.
  for raw in ["House of M: Civil War #1-5","House of M: Masters of Evil #1-4","House of M: Avengers #1-5"]:
   add(req,raw,"house-trades")
@@ -115,7 +126,8 @@ def main():
  records=[];evs=[]
  for n in [6,7,8]:
   u=CBRO+f"marvel-master-reading-order-part-{n}/"
-  a,b=collect(get(u),u);records+=a;evs+=b
+  soup=get(u);a,b=collect(soup,u);records+=a;evs+=b
+  evs += [urljoin(u,a.get("href")) for a in soup.select("a[href]") if "/marvel/events/" in a.get("href","") and "-reading-order/" in a.get("href","")]
   print("MASTER",n,len(a),len(b),flush=True)
   time.sleep(.5)
  evs=list(dict.fromkeys(evs))
@@ -134,7 +146,15 @@ def main():
   poss=grouped.get(k,[])
   ids={p["id"] for p in poss}
   if len(ids)==1:matched[k]=next(iter(ids))
-  elif len(ids)>1:amb.append((k,[(p["title"],p["id"]) for p in poss[:5]]))
+  elif len(ids)>1:
+   prefer=None
+   # Source-era volume disambiguation for comics with multiple identically numbered runs.
+   if k[0]=="runaways" and 1<=k[1]<=6:prefer=next((p["id"] for p in poss if p["title"].startswith("Runaways Vol. 2 ")),None)
+   if k[0]=="black widow" and 1<=k[1]<=6:prefer=next((p["id"] for p in poss if p["title"].startswith("Black Widow Vol. 3 ")),None)
+   if k[0]=="black panther":prefer=next((p["id"] for p in poss if p["title"].startswith("Black Panther Vol. 4 ")),None)
+   if k[0]=="blade":prefer=next((p["id"] for p in poss if p["title"].startswith("Blade Vol. 5 ")),None)
+   if prefer:matched[k]=prefer
+   else:amb.append((k,[(p["title"],p["id"]) for p in poss[:5]]))
   else:missing.append(k)
  # Issues repeated in event pages/master may have the same ID.
  print("CHECK_RESULT",json.dumps({"recordCount":len(records),"cbhExplicit":len(req),"matched":len(matched),"ambiguous":len(amb),"missing":len(missing),"missingSamples":missing[:160],"ambiguousSamples":amb[:40]},ensure_ascii=False),flush=True)
