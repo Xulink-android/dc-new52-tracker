@@ -119,7 +119,7 @@ for src,url in urls:
     # Running the generic title regex here invents an "Issues" comic and duplicates entries.
     if not (in_last_page and re.match(r"^Issues?\s*:",t,re.I)):
      for m in re.finditer(r"([A-Za-z][A-Za-z0-9&:''().,/ –-]{2,85}?)\s*#(\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(\d{1,4}))?",t,re.I):
-     title=m.group(1).strip(" :-–.,")
+      title=m.group(1).strip(" :-–.,")
       first=int(m.group(2));last=int(m.group(3) or first)
       if last<first or last-first>120:continue
       for issue in range(first,last+1):add(src,title,issue,url,t)
