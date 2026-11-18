@@ -33,7 +33,7 @@ for src,url in urls:
      add(src,m.group(1),m.group(2),url,text)
      # CBRO prints issue publication year beside each checkbox.
      # Capture it as evidence; do not confuse this with reading-order era.
-     context=label.parent.get_text(" ",strip=True) if label.parent else text
+     context=text  # Only the issue-specific label, never a container of unrelated comics
      year_match=re.search(r"\b(?:19|20)\d{2}\b",context)
      if year_match:
       rows[-1]["publication_year"]=year_match.group(0)
@@ -193,7 +193,7 @@ write("conflits_volumes.csv",volume_conflicts,["title_cbh","candidate_cbro_volum
 # Quantify publication-year evidence collected from actual CBRO page text.
 dated_rows=[x for x in rows if x["source"]=="CBRO" and x.get("publication_year")]
 write("cbro_annees_observees.csv",dated_rows,fields)
-print("CBRO YEAR EVIDENCE",len(dated_rows),flush=True)
+print("CBRO YEAR EVIDENCE (LABEL ONLY)",len(dated_rows),flush=True)
 
 
 print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
