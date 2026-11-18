@@ -139,6 +139,20 @@ def write(name,data,fields):
   w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(data)
 fields=["source","title","normalized","volume","issue","url","evidence","publication_year","checkbox_id","checkbox_name","checkbox_value","series_start_year","cbh_group_date"]
 write("extractions.csv",rows,fields)
+
+# Evidence audit: CBH ranges must carry dates only from their own textual entry.
+# Do not treat a CBH group date as the series launch year.
+cbh_dates=[x for x in rows if x["source"]=="CBH" and x.get("cbh_group_date")]
+date_examples=[]
+seen_date_examples=set()
+for x in cbh_dates:
+ key=(x["title"],x["cbh_group_date"],x["url"])
+ if key not in seen_date_examples:
+  seen_date_examples.add(key)
+  date_examples.append({"title":x["title"],"issue":x["issue"],"cbh_group_date":x["cbh_group_date"],"evidence":x["evidence"],"url":x["url"]})
+write("dates_groupes_cbh_exemples.csv",date_examples,["title","issue","cbh_group_date","evidence","url"])
+print("CBH GROUP DATES",len(cbh_dates),"UNIQUE EXAMPLES",len(date_examples),flush=True)
+
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
 write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
 idx={}
