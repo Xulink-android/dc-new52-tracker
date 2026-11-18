@@ -44,7 +44,7 @@ for src,url in urls:
      if checkbox is None and label.get("for"):
       checkbox=main.find("input",id=label.get("for"))
      if checkbox is not None:
-      rows[-1]["checkbox_id"]=checkbox.get("id","")
+      rows[-1]["checkbox_id"]=checkbox.get("data-id","") or checkbox.get("id","")
       rows[-1]["checkbox_name"]=checkbox.get("name","")
       rows[-1]["checkbox_value"]=checkbox.get("value","")
      # CBRO prints issue publication year beside each checkbox.
@@ -217,6 +217,17 @@ write("conflits_volumes.csv",volume_conflicts,["title_cbh","candidate_cbro_volum
 # Quantify publication-year evidence collected from actual CBRO page text.
 dated_rows=[x for x in rows if x["source"]=="CBRO" and x.get("publication_year")]
 write("cbro_annees_observees.csv",dated_rows,fields)
+
+# Confirm CBRO progress keys are unique per issue and available for JSON reconciliation.
+keys=[x["checkbox_id"] for x in rows if x["source"]=="CBRO" and x.get("checkbox_id")]
+key_collisions=defaultdict(list)
+for x in rows:
+ if x["source"]=="CBRO" and x.get("checkbox_id"):
+  key_collisions[x["checkbox_id"]].append(x)
+conflicts=[{"checkbox_id":key,"references":" | ".join(sorted(set(v["title"]+" #"+v["issue"] for v in values))),"occurrences":len(values)} for key,values in key_collisions.items() if len(set(v["title"]+" #"+v["issue"] for v in values))>1]
+write("conflits_identifiants_cbro.csv",conflicts,["checkbox_id","references","occurrences"])
+print("CBRO DATA-ID COVERAGE",len(keys),"COLLISIONS",len(conflicts),flush=True)
+
 print("CBRO YEAR EVIDENCE (LABEL ONLY)",len(dated_rows),flush=True)
 
 
@@ -227,7 +238,7 @@ print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
