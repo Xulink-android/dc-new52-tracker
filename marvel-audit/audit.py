@@ -17,7 +17,7 @@ for src,url in urls:
    if tag.name=="p" and tag.find_parent("li"):continue
    t=tag.get_text(" ",strip=True)
    if not t or len(t)>700:continue
-   for m in re.finditer(r"([A-Za-z][A-Za-z0-9&:'()., /-]{2,80}?)\\s*#(\\d{1,4})(?:\\s*[-–]\\s*#?(\\d{1,4}))?",t):
+   for m in re.finditer(r"([A-Za-z][A-Za-z0-9&:'()., /-]{2,80}?)\s*#(\d{1,4})(?:\s*[-–]\s*#?(\d{1,4}))?",t):
     title=re.sub(r"[^a-z0-9]+","-",m.group(1).lower()).strip("-")
     a=int(m.group(2));b=int(m.group(3) or a)
     if b<a or b-a>150:continue
