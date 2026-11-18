@@ -27,6 +27,7 @@ for src,url in urls:
   if src=="CBRO":
    # Only actual checkbox labels, not notes, links, or duplicate explanatory text.
    debug_labels=0
+   debug_issues=0
    for label in main.select("label"):
     if debug_labels<2:
      print("CBRO LABEL HTML",str(label.parent)[:1400],flush=True)
@@ -34,6 +35,9 @@ for src,url in urls:
     text=label.get_text(" ",strip=True)
     m=re.search(r"(?:Mark\s+)?(.+?)\s+#(\d{1,4})(?:\s+as read)?$",text,re.I)
     if m:
+     if debug_issues<3:
+      print("CBRO ISSUE HTML",str(label.parent)[:2000],flush=True)
+      debug_issues+=1
      add(src,m.group(1),m.group(2),url,text)
      # Preserve the exact checkbox locator for future JSON reconciliation.
      checkbox=label.find("input",attrs={"type":"checkbox"})
