@@ -77,31 +77,26 @@ def extract(page_id, label, url, expected):
   if len(output)>MAX_ITEMS:raise ValueError("Unexpected page size")
   return {"id":page_id,"name":label,"url":url,"expectedIssues":expected,"issues":issue_count,"events":events,"items":output}
 def extract_event(parent):
-  """Issue-only order from the linked event page; no article body reused."""
+  """Extract issue names from the source event's ordered list, leaving note rows untouched."""
   url=parent["url"]
   r=requests.get(url,timeout=45,headers=HEADERS)
   r.raise_for_status()
   soup=BeautifulSoup(r.text,"html.parser")
   found=[]
-  seen=set()
-  for el in soup.find_all(True):
-    for val in (el.get("aria-label"),el.get("title"),el.get("data-label")):
-      if not isinstance(val,str):continue
-      m=PAT.search(val.strip())
-      if not m:continue
-      title=m.group(1).strip()
-      key=title.casefold()
-      if key not in seen:
-        seen.add(key)
-        found.append({
-          "id":f'{parent["id"]}-issue-{len(found)+1:03d}',
-          "order":len(found)+1,
-          "title":title,
-        })
-      break
+  for row in soup.select("ol.issues li.issue"):
+    node=row.select_one(".issue-title")
+    title=node.get_text(" ",strip=True) if node else ""
+    if not title:
+      label=row.select_one("label.check .sr")
+      match=PAT.search(label.get_text(" ",strip=True)) if label else None
+      title=match.group(1).strip() if match else ""
+    if title:
+      found.append({
+        "id":f'{parent["id"]}-issue-{len(found)+1:03d}',
+        "order":len(found)+1,
+        "title":title,
+      })
   if len(found)<1 or len(found)>500:
-    pos=r.text.find('Mark ')
-    print("EVENT DEBUG",{"url":url,"length":len(r.text),"title":soup.title.get_text(" ",strip=True) if soup.title else "-","mark_pos":pos,"mark_excerpt":r.text[max(0,pos-400):pos+400] if pos>=0 else "","first_inputs":[str(x)[:180] for x in soup.find_all("input")[:3]],"body":soup.get_text(" ",strip=True)[:450]},flush=True)
     raise ValueError(f"Unexpected event list length {len(found)} for {url}")
   print(f"Event {parent['title']}: {len(found)} issues",flush=True)
   return found
