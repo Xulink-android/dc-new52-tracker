@@ -20,9 +20,10 @@ def add(src,title,issue,url,evidence,volume=""):
  title=re.sub(r"\s*\(\d{4}\)\s*$","",title).strip()
  if not title or len(title)>105:return
  cbh_group_date=""
- if src=="CBH" and len(re.findall(r"#\\s*\\d+",evidence))<=2:
+ if src=="CBH" and not re.match(r"^\s*(?:collects?|issues?)\s*:",evidence,re.I) and len(re.findall(r"#\s*\d+",evidence))<=2 and not re.search(r"\((?:19|20)\d{2}\)",evidence):
   # Avoid attaching a date from one comic to another in multi-series commentary.
   date_match=re.search(r"\((?:(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+)?[\u2019\u0027]?(\d{2}|(?:19|20)\d{2})\)",evidence,re.I)
+  # The range date must have a month, unlike series start years in Collects entries.
   if date_match:
    year=date_match.group(2)
    cbh_group_date=(date_match.group(1)+" " if date_match.group(1) else "")+(("20" if int(year)<50 else "19")+year if len(year)==2 else year)
