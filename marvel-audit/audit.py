@@ -29,7 +29,14 @@ for src,url in urls:
    for label in main.select("label"):
     text=label.get_text(" ",strip=True)
     m=re.search(r"(?:Mark\s+)?(.+?)\s+#(\d{1,4})(?:\s+as read)?$",text,re.I)
-    if m:add(src,m.group(1),m.group(2),url,text)
+    if m:
+     add(src,m.group(1),m.group(2),url,text)
+     # CBRO prints issue publication year beside each checkbox.
+     # Capture it as evidence; do not confuse this with reading-order era.
+     context=label.parent.get_text(" ",strip=True) if label.parent else text
+     year_match=re.search(r"\\b(?:19|20)\\d{2}\\b",context)
+     if year_match:
+      rows[-1]["publication_year"]=year_match.group(0)
    # Some themes do not use labels: recover explicit 'Mark X #N as read' text.
    if len(rows)==n0:
     for node in main.find_all(string=re.compile(r"Mark .+?#\d+ as read",re.I)):
