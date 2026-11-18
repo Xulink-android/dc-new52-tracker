@@ -13,11 +13,13 @@ def clean(t):
  return re.sub(r"[^a-z0-9]+","-",t).strip("-")
 def add(src,title,issue,url,evidence,volume=""):
  title=re.sub(r"\s+"," ",title).strip(" :-–.,")
+ series_year_match=re.search(r"\((19\d{2}|20\d{2})\)\s*$",title)
+ series_start_year=series_year_match.group(1) if src=="CBH" and series_year_match else ""
  title=re.sub(r"^(?:collects?|issues?)\s*:\s*","",title,flags=re.I).strip()
  title=re.sub(r"\s*\(\s*$","",title).strip()
  title=re.sub(r"\s*\(\d{4}\)\s*$","",title).strip()
  if not title or len(title)>105:return
- rows.append(dict(source=src,title=title,normalized=clean(title),volume=volume,issue=str(issue),url=url,evidence=evidence[:250]))
+ rows.append(dict(source=src,title=title,normalized=clean(title),volume=volume,issue=str(issue),url=url,evidence=evidence[:250],series_start_year=series_start_year))
 issue_pattern=re.compile(r"(?:(?P<title>[A-Za-z][A-Za-z0-9 :&'().,/–-]{2,80}?)\s*)?#(?P<first>\d{1,4})(?:\s*(?:to|through|[-–])\s*#?(?P<last>\d{1,4}))?",re.I)
 for src,url in urls:
  try:
@@ -128,7 +130,7 @@ for src,url in urls:
 def write(name,data,fields):
  with (O/name).open("w",newline="",encoding="utf-8-sig") as f:
   w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(data)
-fields=["source","title","normalized","volume","issue","url","evidence","publication_year","checkbox_id","checkbox_name","checkbox_value"]
+fields=["source","title","normalized","volume","issue","url","evidence","publication_year","checkbox_id","checkbox_name","checkbox_value","series_start_year"]
 write("extractions.csv",rows,fields)
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
 write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
@@ -161,6 +163,18 @@ for k in sorted(a.keys()&b.keys()):
 match_fields=["title_cbh","title_cbro","issue","cbh_url","cbro_url","reason"]
 write("correspondances_titres_identiques.csv",safe,match_fields)
 write("correspondances_a_verifier.csv",review,match_fields)
+
+# Date audit uses distinct semantics, never a year-equality rule:
+# CBH parenthetical year = series launch; CBRO year = individual issue.
+chronology=[]
+for k in sorted(a.keys()&b.keys()):
+ left,right=a[k],b[k]
+ sy=left.get("series_start_year","")
+ iy=right.get("publication_year","")
+ chronology.append({"title_cbh":left["title"],"title_cbro":right["title"],"issue":left["issue"],"cbh_series_start_year":sy,"cbro_issue_publication_year":iy,"chronology":("ISSUE_PRECEDES_SERIES_START" if sy and iy and int(iy)<int(sy) else "PLAUSIBLE_NOT_PROVEN" if sy and iy else "DATE_INCOMPLETE"),"cbro_data_id":right.get("checkbox_id",""),"cbh_url":left["url"],"cbro_url":right["url"]})
+write("chronologie_series_vs_numeros.csv",chronology,["title_cbh","title_cbro","issue","cbh_series_start_year","cbro_issue_publication_year","chronology","cbro_data_id","cbh_url","cbro_url"])
+print("CHRONOLOGY YEAR PAIRS",sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"IMPOSSIBLE",sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),flush=True)
+
 
 # Group review candidates by series/volume pair, reducing hundreds of
 # issue-level checks to a smaller set of explicit editorial decisions.
@@ -245,7 +259,7 @@ print("UNIQUE SERIES PAIRS",len(series_report),flush=True)
 # Never treat the following as verified reading progress:
 # titles normalized without volume identity; narrative recommendations;
 # CBRO pages outside this limited selection; duplicated ranges.
-report={"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
+report={"cbh_series_start_year_evidence":sum(bool(x.get("series_start_year")) for x in rows if x["source"]=="CBH"),"chronology_year_pairs":sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"chronology_impossible":sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),"cbro_data_id_coverage":len(keys),"cbro_data_id_conflicts":len(conflicts),"cbro_publication_year_evidence":len(dated_rows),"volume_conflicts":len(volume_conflicts),"unique_series_pairs":len(series_report),"review_groups":len(review_groups),"identical_title_candidates":len(safe),"requires_review":len(review),"suspect_contexts":len(suspect),"unresolved_issues":len(unresolved),"scope_violations":scope_violations,"antman_stop_found":stop_found,"warning":"DIAGNOSTIC UNIQUEMENT. Volumes ignorés dans les rapprochements; recueils et événements non exhaustifs. Aucun JSON modifié.","pages":len(urls),"errors":errors,"diagnostics":diagnostics,"cbh_unique":len(a),"cbro_unique":len(b),"common_approximate":len(a.keys()&b.keys()),"cbh_only_approximate":len(a.keys()-b.keys()),"cbro_only_approximate":len(b.keys()-a.keys())}
 (O/"bilan.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,indent=2),flush=True)
 if errors or scope_violations:raise SystemExit(2)
