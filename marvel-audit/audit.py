@@ -196,9 +196,9 @@ for k in sorted(a.keys()&b.keys()):
  left,right=a[k],b[k]
  sy=left.get("series_start_year","")
  iy=right.get("publication_year","")
- chronology.append({"title_cbh":left["title"],"title_cbro":right["title"],"issue":left["issue"],"cbh_series_start_year":sy,"cbro_issue_publication_year":iy,"chronology":("ISSUE_PRECEDES_SERIES_START" if sy and iy and int(iy)<int(sy) else "PLAUSIBLE_NOT_PROVEN" if sy and iy else "DATE_INCOMPLETE"),"cbro_data_id":right.get("checkbox_id",""),"cbh_url":left["url"],"cbro_url":right["url"]})
+ chronology.append({"title_cbh":left["title"],"title_cbro":right["title"],"issue":left["issue"],"cbh_series_start_year":sy,"cbro_issue_publication_year":iy,"chronology":("REVIEW_YEAR_SOURCE_AND_VOLUME" if sy and iy and int(iy)<int(sy) else "PLAUSIBLE_NOT_PROVEN" if sy and iy else "DATE_INCOMPLETE"),"cbro_data_id":right.get("checkbox_id",""),"cbh_url":left["url"],"cbro_url":right["url"]})
 write("chronologie_series_vs_numeros.csv",chronology,["title_cbh","title_cbro","issue","cbh_series_start_year","cbro_issue_publication_year","chronology","cbro_data_id","cbh_url","cbro_url"])
-print("CHRONOLOGY YEAR PAIRS",sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"IMPOSSIBLE",sum(x["chronology"]=="ISSUE_PRECEDES_SERIES_START" for x in chronology),flush=True)
+print("CHRONOLOGY YEAR PAIRS",sum(x["chronology"]!="DATE_INCOMPLETE" for x in chronology),"IMPOSSIBLE",sum(x["chronology"]=="REVIEW_YEAR_SOURCE_AND_VOLUME" for x in chronology),flush=True)
 
 
 # Group review candidates by series/volume pair, reducing hundreds of
