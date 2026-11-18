@@ -1,0 +1,34 @@
+name: Import Comic Book Reading Orders New 52
+on:
+  push:
+    paths:
+      - '.github/workflows/import-cbro.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check requests beautifulsoup4
+      - name: Import and validate the three reading order pages
+        run: python scripts/import_new52_cbro.py
+      - name: Publish validated factual issue labels
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add issue-tracker/catalog.json
+          if git diff --cached --quiet; then
+            echo "No catalogue changes"
+          else
+            git commit -m "Import 3 New 52 issue reading-order parts"
+            git push
+          fi
