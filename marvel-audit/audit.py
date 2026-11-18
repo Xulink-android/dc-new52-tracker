@@ -26,7 +26,11 @@ for src,url in urls:
   n0=len(rows)
   if src=="CBRO":
    # Only actual checkbox labels, not notes, links, or duplicate explanatory text.
+   debug_labels=0
    for label in main.select("label"):
+    if debug_labels<2:
+     print("CBRO LABEL HTML",str(label.parent)[:1400],flush=True)
+     debug_labels+=1
     text=label.get_text(" ",strip=True)
     m=re.search(r"(?:Mark\s+)?(.+?)\s+#(\d{1,4})(?:\s+as read)?$",text,re.I)
     if m:
