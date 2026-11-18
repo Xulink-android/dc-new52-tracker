@@ -76,6 +76,34 @@ def extract(page_id, label, url, expected):
     raise ValueError(f"Part {page_id}: expected around {expected} single issues, got {issue_count}. Refusing to publish partial data.")
   if len(output)>MAX_ITEMS:raise ValueError("Unexpected page size")
   return {"id":page_id,"name":label,"url":url,"expectedIssues":expected,"issues":issue_count,"events":events,"items":output}
+def extract_event(parent):
+  """Issue-only order from the linked event page; no article body reused."""
+  url=parent["url"]
+  r=requests.get(url,timeout=45,headers=HEADERS)
+  r.raise_for_status()
+  soup=BeautifulSoup(r.text,"html.parser")
+  found=[]
+  seen=set()
+  for el in soup.find_all(True):
+    for val in (el.get("aria-label"),el.get("title"),el.get("data-label")):
+      if not isinstance(val,str):continue
+      m=PAT.search(val.strip())
+      if not m:continue
+      title=m.group(1).strip()
+      key=title.casefold()
+      if key not in seen:
+        seen.add(key)
+        found.append({
+          "id":f'{parent["id"]}-issue-{len(found)+1:03d}',
+          "order":len(found)+1,
+          "title":title,
+        })
+      break
+  if len(found)<1 or len(found)>500:
+    raise ValueError(f"Unexpected event list length {len(found)} for {url}")
+  print(f"Event {parent['title']}: {len(found)} issues",flush=True)
+  return found
+
 def main():
   parts=[]
   for x in PAGES:
@@ -83,7 +111,30 @@ def main():
     time.sleep(.8)
   n=sum(p["issues"] for p in parts)
   if n<1900:raise ValueError("Incomplete reading order")
+  event_count=0
+  event_issue_total=0
+  failed=[]
+  for p in parts:
+    for parent in p["items"]:
+      if parent["kind"]!="event":continue
+      if parent["title"]=="DC You":
+        parent["separatePeriod"]=True
+        continue
+      try:
+        parent["subIssues"]=extract_event(parent)
+        event_count+=1
+        event_issue_total+=len(parent["subIssues"])
+      except Exception as exc:
+        parent["eventImportError"]=str(exc)
+        failed.append((parent["title"],str(exc)))
+        print("EVENT IMPORT ERROR",parent["title"],str(exc),flush=True)
+      time.sleep(.4)
+  if event_count<20:
+    raise ValueError(f"Only {event_count} event lists imported; refusing incomplete release. {failed}")
   output={
+    "eventIssuesTotal":event_issue_total,
+    "eventListsImported":event_count,
+    "eventListsFailed":failed,
     "source":"Comic Book Reading Orders",
     "sourceUrl":PAGES[0][2],
     "scope":"Three New 52 parts, events referenced in place. DC You is separate.",
