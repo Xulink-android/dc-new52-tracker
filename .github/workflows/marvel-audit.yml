@@ -6,6 +6,9 @@ on:
     paths:
       - 'marvel-audit/**'
       - '.github/workflows/marvel-audit.yml'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 jobs:
   audit:
