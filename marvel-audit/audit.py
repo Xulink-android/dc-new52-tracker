@@ -31,6 +31,14 @@ for src,url in urls:
     m=re.search(r"(?:Mark\s+)?(.+?)\s+#(\d{1,4})(?:\s+as read)?$",text,re.I)
     if m:
      add(src,m.group(1),m.group(2),url,text)
+     # Preserve the exact checkbox locator for future JSON reconciliation.
+     checkbox=label.find("input",attrs={"type":"checkbox"})
+     if checkbox is None and label.get("for"):
+      checkbox=main.find("input",id=label.get("for"))
+     if checkbox is not None:
+      rows[-1]["checkbox_id"]=checkbox.get("id","")
+      rows[-1]["checkbox_name"]=checkbox.get("name","")
+      rows[-1]["checkbox_value"]=checkbox.get("value","")
      # CBRO prints issue publication year beside each checkbox.
      # Capture it as evidence; do not confuse this with reading-order era.
      context=text  # Only the issue-specific label, never a container of unrelated comics
@@ -103,7 +111,7 @@ for src,url in urls:
 def write(name,data,fields):
  with (O/name).open("w",newline="",encoding="utf-8-sig") as f:
   w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(data)
-fields=["source","title","normalized","volume","issue","url","evidence","publication_year"]
+fields=["source","title","normalized","volume","issue","url","evidence","publication_year","checkbox_id","checkbox_name","checkbox_value"]
 write("extractions.csv",rows,fields)
 write("unresolved_issues.csv",unresolved,["url","text","collection"])
 write("suspect_contexts.csv",suspect,["url","title","evidence","reason"])
